@@ -18,7 +18,10 @@ import { API_BASE } from '../api';
 
 const { width } = Dimensions.get('window');
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function SignUp({ onSignUp, onSignIn }) {
+    // ... (State vars remain same)
     const [formData, setFormData] = useState({
         title: 'Mr.',
         fullName: '',
@@ -29,11 +32,12 @@ export default function SignUp({ onSignUp, onSignIn }) {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { useTranslation } = useLanguage();
 
     const handleSignUp = async () => {
         const { fullName, email, password } = formData;
         if (!fullName || !email || !password) {
-            Alert.alert('Error', 'All fields are required');
+            Alert.alert(useTranslation('Error'), useTranslation('All fields are required'));
             return;
         }
 
@@ -52,25 +56,21 @@ export default function SignUp({ onSignUp, onSignIn }) {
             const data = await res.json();
 
             if (res.ok) {
-                Alert.alert('Success', 'Account created! Please sign in.', [
+                Alert.alert(useTranslation('Success'), useTranslation('Account created! Please sign in.'), [
                     { text: 'OK', onPress: onSignIn }
                 ]);
             } else {
-                Alert.alert('Signup Failed', JSON.stringify(data));
+                Alert.alert(useTranslation('Signup Failed'), JSON.stringify(data));
             }
         } catch (error) {
             console.error("Signup error:", error);
-            Alert.alert('Error', 'Failed to connect to server');
+            Alert.alert(useTranslation('Error'), useTranslation('Failed to connect to server'));
         } finally {
             setLoading(false);
         }
     };
 
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-    const updateField = (field, value) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-    };
+    // ...
 
     return (
         <SafeAreaView style={styles.container}>
@@ -79,10 +79,10 @@ export default function SignUp({ onSignUp, onSignIn }) {
                 style={{ flex: 1 }}
             >
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                    <Text style={styles.headerTitle}>Sign UP</Text>
+                    <Text style={styles.headerTitle}>{useTranslation('Sign UP')}</Text>
 
                     <Text style={styles.subtext}>
-                        Fill in your details to create an account.
+                        {useTranslation('Fill in your details to create an account.')}
                     </Text>
 
                     <View style={styles.form}>
@@ -96,7 +96,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
                             <View style={[styles.inputContainer, styles.flexInput]}>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="Full Name"
+                                    placeholder={useTranslation("Full Name")}
                                     placeholderTextColor="#94a3b8"
                                     value={formData.fullName}
                                     onChangeText={(text) => updateField('fullName', text)}
@@ -108,7 +108,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder="Email"
+                                placeholder={useTranslation("Email")}
                                 placeholderTextColor="#94a3b8"
                                 value={formData.email}
                                 onChangeText={(text) => updateField('email', text)}
@@ -121,7 +121,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder="Password"
+                                placeholder={useTranslation("Password")}
                                 placeholderTextColor="#94a3b8"
                                 value={formData.password}
                                 onChangeText={(text) => updateField('password', text)}
@@ -133,7 +133,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder="Verify Password"
+                                placeholder={useTranslation("Verify Password")}
                                 placeholderTextColor="#94a3b8"
                                 value={formData.confirmPassword}
                                 onChangeText={(text) => updateField('confirmPassword', text)}
@@ -159,7 +159,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
                             <View style={[styles.inputContainer, styles.flexInput]}>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="Phone"
+                                    placeholder={useTranslation("Phone")}
                                     placeholderTextColor="#94a3b8"
                                     value={formData.phone}
                                     onChangeText={(text) => updateField('phone', text)}
@@ -176,14 +176,14 @@ export default function SignUp({ onSignUp, onSignIn }) {
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.signUpButtonText}>Register</Text>
+                                <Text style={styles.signUpButtonText}>{useTranslation('Register')}</Text>
                             )}
                         </TouchableOpacity>
 
                         <View style={styles.footer}>
-                            <Text style={styles.footerText}>Already have an account? </Text>
+                            <Text style={styles.footerText}>{useTranslation('Already have an account?')} </Text>
                             <TouchableOpacity onPress={onSignIn}>
-                                <Text style={styles.signInLinkText}>Sign In</Text>
+                                <Text style={styles.signInLinkText}>{useTranslation('Sign In')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     signUpButton: {
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         height: 52,
         borderRadius: 10,
         alignItems: 'center',
@@ -286,23 +286,9 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 16,
     },
-    signUpButtonText: {
-        color: '#fff',
-        fontSize: 17,
-        fontWeight: '700',
-    },
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    footerText: {
-        fontSize: 14,
-        color: '#64748b',
-    },
     signInLinkText: {
         fontSize: 14,
-        color: '#6366f1',
+        color: '#16a34a',
         fontWeight: '700',
     },
 });

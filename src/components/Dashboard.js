@@ -76,11 +76,14 @@ const SOCIALS = [
     { id: 8, icon: Mail, color: '#ea4335', label: 'Email' },
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, onOpenStore }) {
     const [menuVisible, setMenuVisible] = React.useState(false);
     const [banners, setBanners] = React.useState([]);
     const [testimonials, setTestimonials] = React.useState([]);
     const [subjects, setSubjects] = React.useState([]);
+    const { useTranslation } = useLanguage();
 
     React.useEffect(() => {
         const fetchData = async () => {
@@ -120,7 +123,7 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                             </TouchableOpacity>
                             <View>
                                 <Text style={styles.headerTitle}>VetPathshala Education</Text>
-                                <Text style={styles.headerSubtitle}>Welcome Back {userName}</Text>
+                                <Text style={styles.headerSubtitle}>{useTranslation('Welcome Back')} {userName}</Text>
                             </View>
                         </View>
                         <View style={styles.headerRight}>
@@ -169,11 +172,11 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                         style={styles.banner}
                     >
                         <View style={styles.bannerContent}>
-                            <Text style={styles.bannerTitle}>Invite Friends & Earn Big!</Text>
+                            <Text style={styles.bannerTitle}>{useTranslation('Invite Friends & Earn Big!')}</Text>
                             <Text style={styles.bannerText}>
-                                You get 100 Coins + 10% Cash Commission.
+                                {useTranslation('You get 100 Coins + 10% Cash Commission.')}
                             </Text>
-                            <Text style={styles.bannerText}>Your friend gets 50 Coins.</Text>
+                            <Text style={styles.bannerText}>{useTranslation('Your friend gets 50 Coins.')}</Text>
                         </View>
                         <View style={styles.bannerIllustration}>
                             <View style={[styles.coin, { top: 0, right: 0 }]} />
@@ -184,7 +187,7 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                 )}
 
                 {/* Categories */}
-                <Text style={styles.sectionTitle}>Choose Category</Text>
+                <Text style={styles.sectionTitle}>{useTranslation('Choose Category')}</Text>
                 <View style={styles.grid}>
                     {subjects.length > 0 ? subjects.map((sub) => (
                         <TouchableOpacity
@@ -224,18 +227,18 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                                 {/* Placeholder for category image */}
                                 <View style={[styles.categoryImagePlaceholder, { backgroundColor: 'rgba(0,0,0,0.05)' }]} />
                             </LinearGradient>
-                            <Text style={styles.categoryTitle}>{cat.title}</Text>
+                            <Text style={styles.categoryTitle}>{useTranslation(cat.title)}</Text>
                             <View style={styles.categoryBorder} />
                         </TouchableOpacity>
                     ))}
                 </View>
 
                 {/* Recent Activity */}
-                <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Recent Activity</Text>
+                <Text style={[styles.sectionTitle, { marginTop: 20 }]}>{useTranslation('Recent Activity')}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.activityScroll}>
                     {RECENT_ACTIVITY.map((activity) => (
                         <View key={activity.id} style={[styles.activityCard, { backgroundColor: activity.color }]}>
-                            <Text style={styles.activityTitle}>{activity.title}</Text>
+                            <Text style={styles.activityTitle}>{useTranslation(activity.title)}</Text>
                             <View style={styles.progressBarBg}>
                                 <View style={[styles.progressBarFill, { width: `${activity.percent * 100}%`, backgroundColor: activity.barColor }]} />
                             </View>
@@ -246,9 +249,9 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
 
                 {/* Success Stories */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Success Stories</Text>
+                    <Text style={styles.sectionTitle}>{useTranslation('Success Stories')}</Text>
                     <TouchableOpacity style={styles.seeAllBtn}>
-                        <Text style={styles.seeAllText}>See All</Text>
+                        <Text style={styles.seeAllText}>{useTranslation('See All')}</Text>
                         <ChevronRight size={16} color="#3b82f6" />
                     </TouchableOpacity>
                 </View>
@@ -274,7 +277,7 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                     ) : (
                         <>
                             <Text style={styles.testimonialText}>
-                                "VetPathshala helped me pass my exams with flying colors. The Q Bank and lectures were incredibly helpful for my preparation."
+                                "{useTranslation('VetPathshala helped me pass my exams with flying colors. The Q Bank and lectures were incredibly helpful for my preparation.')}"
                             </Text>
                             <View style={styles.testimonialUser}>
                                 <View style={styles.avatar}>
@@ -291,7 +294,7 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
 
                 {/* Connect With Us */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Connect With Us</Text>
+                    <Text style={styles.sectionTitle}>{useTranslation('Connect With Us')}</Text>
                 </View>
                 <View style={styles.socialGrid}>
                     {SOCIALS.map((social) => {
@@ -312,23 +315,23 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
             <View style={styles.bottomNav}>
                 <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('dashboard')}>
                     <Home color="#16a34a" size={24} />
-                    <Text style={[styles.navLabel, { color: '#16a34a' }]}>Home</Text>
+                    <Text style={[styles.navLabel, { color: '#16a34a' }]}>{useTranslation('Home')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('ebook')}>
                     <BookOpen color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>Ebook</Text>
+                    <Text style={styles.navLabel}>{useTranslation('Ebook')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('drug_center')}>
                     <Pill color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>Drug Index</Text>
+                    <Text style={styles.navLabel}>{useTranslation('Drug Index')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem} onPress={onOpenStore}>
                     <Crown color="#f59e0b" size={24} />
-                    <Text style={styles.navLabel}>Store</Text>
+                    <Text style={styles.navLabel}>{useTranslation('Store')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
                     <Settings color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>Settings</Text>
+                    <Text style={styles.navLabel}>{useTranslation('Settings')}</Text>
                 </TouchableOpacity>
             </View>
         </View>

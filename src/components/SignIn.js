@@ -12,17 +12,72 @@ import {
     Image,
     ScrollView
 } from 'react-native';
-import { Eye, EyeOff, Facebook, Chrome, Smartphone, ArrowRight } from 'lucide-react-native';
+import { Eye, EyeOff, Facebook, Smartphone, ArrowRight } from 'lucide-react-native';
 import { Alert, ActivityIndicator } from 'react-native';
 import { API_BASE } from '../api';
 
 const { width } = Dimensions.get('window');
+
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    // Google Sign-In Configuration
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
+        iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+        webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    });
+
+    React.useEffect(() => {
+        if (response?.type === 'success') {
+            const { authentication } = response;
+            handleGoogleSignIn(authentication.accessToken);
+        }
+    }, [response]);
+
+    const handleGoogleSignIn = async (token) => {
+        setLoading(true);
+        try {
+            // Option 1: Send token to your backend (Recommended)
+            /*
+            const res = await fetch(`${API_BASE}/users/google-login/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token })
+            });
+            const data = await res.json();
+            if (res.ok) onSignIn(data.user, data.token);
+            */
+
+            // Option 2: Demo/Frontend-only flow (fetching user info directly from Google)
+            const res = await fetch('https://www.googleapis.com/userinfo/v2/me', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const user = await res.json();
+            console.log('Google User:', user);
+
+            // Mock successful login with Google data
+            onSignIn({
+                username: user.name,
+                email: user.email,
+                picture: user.picture
+            }, token);
+
+        } catch (error) {
+            console.error("Google Sign-In Error:", error);
+            Alert.alert('Error', 'Failed to sign in with Google');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSignIn = async () => {
         if (!email || !password) {
@@ -128,8 +183,17 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
                         </View>
 
                         <View style={styles.socialButtons}>
-                            <TouchableOpacity style={styles.socialButton}>
-                                <Chrome size={24} color="#000" />
+                            <TouchableOpacity
+                                style={styles.socialButton}
+                                onPress={() => {
+                                    promptAsync();
+                                }}
+                                disabled={!request}
+                            >
+                                <Image
+                                    source={{ uri: 'https://cdn-icons-png.flaticon.com/512/300/300221.png' }}
+                                    style={{ width: 24, height: 24 }}
+                                />
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.socialButton}>
                                 <Facebook size={24} color="#1877f2" />
@@ -217,33 +281,38 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         marginBottom: 20,
     },
-    forgotPasswordText: {
-        color: '#6366f1',
-        fontSize: 14,
-        fontWeight: '600',
-    },
     signInButton: {
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         height: 52,
         borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#6366f1',
+        shadowColor: '#16a34a',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 8,
         elevation: 4,
         marginBottom: 20,
     },
+    signUpLinkText: {
+        fontSize: 15,
+        color: '#16a34a',
+        fontWeight: '700',
+    },
+    forgotPasswordText: {
+        color: '#16a34a',
+        fontSize: 14,
+        fontWeight: '600',
+    },
     signInButtonText: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: '700',
     },
     dividerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 15,
+        marginVertical: 20,
     },
     line: {
         flex: 1,
@@ -251,26 +320,25 @@ const styles = StyleSheet.create({
         backgroundColor: '#e2e8f0',
     },
     dividerText: {
-        color: '#94a3b8',
         fontSize: 14,
-        fontWeight: '500',
+        color: '#64748b',
         marginHorizontal: 10,
     },
     socialButtons: {
         flexDirection: 'row',
         justifyContent: 'center',
         gap: 20,
-        marginBottom: 25,
+        marginBottom: 30,
     },
     socialButton: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        backgroundColor: '#f8fafc',
-        alignItems: 'center',
-        justifyContent: 'center',
+        width: 60,
+        height: 60,
+        borderRadius: 16,
         borderWidth: 1,
         borderColor: '#e2e8f0',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
     },
     footer: {
         flexDirection: 'row',
@@ -280,11 +348,5 @@ const styles = StyleSheet.create({
     footerText: {
         fontSize: 15,
         color: '#1e293b',
-        fontWeight: '600',
-    },
-    signUpLinkText: {
-        fontSize: 15,
-        color: '#6366f1',
-        fontWeight: '700',
     },
 });

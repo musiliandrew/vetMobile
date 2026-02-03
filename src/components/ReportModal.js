@@ -54,9 +54,45 @@ const REPORT_REASONS = [
     }
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function ReportModal({ visible, onClose, contentPreview = "According to ācharya charaka,..." }) {
     const [selectedReason, setSelectedReason] = useState(null);
     const [comment, setComment] = useState('');
+    const { useTranslation } = useLanguage();
+
+    const REPORT_REASONS = [
+        {
+            id: 'inappropriate',
+            label: useTranslation('Inappropriate Content'),
+            desc: useTranslation('Contains offensive, harmful, or inappropriate material'),
+            icon: AlertTriangle
+        },
+        {
+            id: 'incorrect',
+            label: useTranslation('Incorrect Information'),
+            desc: useTranslation('Contains factually incorrect or misleading information'),
+            icon: Info
+        },
+        {
+            id: 'spam',
+            label: useTranslation('Spam'),
+            desc: useTranslation('Unwanted or repetitive content'),
+            icon: Ban
+        },
+        {
+            id: 'copyright',
+            label: useTranslation('Copyright Violation'),
+            desc: useTranslation('Unauthorized use of copyrighted material'),
+            icon: Copyright
+        },
+        {
+            id: 'technical',
+            label: useTranslation('Technical Issue'),
+            desc: useTranslation('Content has formatting, display, or functionality problems'),
+            icon: Bug
+        }
+    ];
 
     return (
         <Modal
@@ -72,7 +108,7 @@ export default function ReportModal({ visible, onClose, contentPreview = "Accord
                         <View style={styles.headerLeft}>
                             <Flag color="#b91c1c" size={20} fill="#b91c1c" />
                             <View style={styles.headerTexts}>
-                                <Text style={styles.headerTitle}>Report Content</Text>
+                                <Text style={styles.headerTitle}>{useTranslation('Report Content')}</Text>
                                 <Text style={styles.headerSubtitle} numberOfLines={1}>{contentPreview}</Text>
                             </View>
                         </View>
@@ -82,7 +118,7 @@ export default function ReportModal({ visible, onClose, contentPreview = "Accord
                     </View>
 
                     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                        <Text style={styles.promptText}>Why are you reporting this question?</Text>
+                        <Text style={styles.promptText}>{useTranslation('Why are you reporting this question?')}</Text>
 
                         <View style={styles.reasonsList}>
                             {REPORT_REASONS.map((item) => {
@@ -109,7 +145,7 @@ export default function ReportModal({ visible, onClose, contentPreview = "Accord
 
                         <TextInput
                             style={styles.textInput}
-                            placeholder="Report This Question"
+                            placeholder={useTranslation("Report This Question")}
                             placeholderTextColor="#94a3b8"
                             multiline
                             numberOfLines={4}
@@ -118,7 +154,7 @@ export default function ReportModal({ visible, onClose, contentPreview = "Accord
                         />
 
                         <TouchableOpacity style={styles.saveButton} onPress={onClose}>
-                            <Text style={styles.saveButtonText}>Save</Text>
+                            <Text style={styles.saveButtonText}>{useTranslation('Save')}</Text>
                         </TouchableOpacity>
                     </ScrollView>
                 </View>

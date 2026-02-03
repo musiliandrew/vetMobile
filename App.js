@@ -45,16 +45,20 @@ const ScreenWrapper = ({ children, modalVisible, setModalVisible, setCurrentStep
   </>
 );
 
-export default function App() {
-  const [currentStep, setCurrentStep] = useState('splash'); // 'splash', 'language', 'role', 'signin', 'signup', 'otp', 'dashboard', 'ebook', 'drug_center'
+import { LanguageProvider, useLanguage } from './src/context/LanguageContext';
+
+function AppContent() {
+  const [currentStep, setCurrentStep] = useState('splash');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [language, setLanguage] = useState(null);
   const [role, setRole] = useState(null);
   const [user, setUser] = useState(null);
   const [storeModalVisible, setStoreModalVisible] = useState(false);
   const [navParams, setNavParams] = useState({});
+
+  // Use the language context
+  const { setLanguage } = useLanguage();
 
   const navigate = (screen, params = {}) => {
     setNavParams(params);
@@ -88,19 +92,21 @@ export default function App() {
     return (
       <LanguageSelection
         onContinue={(lang) => {
-          setLanguage(lang);
+          setLanguage(lang); // Update global language context
           setCurrentStep('role');
         }}
       />
     );
   }
 
+  // ... (rest of the render logic remains similar, just inside AppContent)
+
   if (currentStep === 'role') {
     return (
       <RoleSelection
         onContinue={(selectedRole) => {
           setRole(selectedRole);
-          setCurrentStep('signin'); // Usually after role, verify signin
+          setCurrentStep('signin');
         }}
       />
     );
@@ -111,7 +117,6 @@ export default function App() {
       <SignIn
         onSignIn={(userData, token) => {
           setUser(userData);
-          // In real app, save token to storage
           setNavParams({ token });
           setCurrentStep('dashboard');
         }}
@@ -146,7 +151,6 @@ export default function App() {
             Alert.alert('Success', 'Phone number verified!');
             setCurrentStep('dashboard');
           } else {
-            // Error handled inside component usually, but double check
             Alert.alert('Error', 'Please verify the code');
           }
         }}
@@ -154,14 +158,6 @@ export default function App() {
       />
     );
   }
-  const onVerifyOTP = (code) => {
-    if (code.length === 4) {
-      Alert.alert('Success', 'Phone number verified!');
-      setCurrentStep('dashboard');
-    } else {
-      Alert.alert('Error', 'Please verify the code');
-    }
-  };
 
   if (currentStep === 'dashboard') {
     return (
@@ -279,6 +275,14 @@ export default function App() {
   }
 
   return null;
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
+  );
 }
 
 // Wrapping function to include modal on top of screen content

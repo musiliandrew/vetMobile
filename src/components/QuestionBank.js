@@ -68,9 +68,11 @@ const TOPICS = [
     }
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function QuestionBank({ onBack, onNavigate }) {
     const [topicsEnabled, setTopicsEnabled] = useState(true);
-    const [lang, setLang] = useState('en');
+    const { useTranslation, language, setLanguage } = useLanguage();
     const [topics, setTopics] = useState([]);
 
     React.useEffect(() => {
@@ -86,7 +88,7 @@ export default function QuestionBank({ onBack, onNavigate }) {
         fetchSubjects();
     }, []);
 
-    const toggleLang = () => setLang(prev => prev === 'en' ? 'hi' : 'en');
+    const toggleLang = () => setLanguage(language === 'en' ? 'hi' : 'en');
 
     const displayTopics = topics.length > 0 ? topics : TOPICS;
 
@@ -105,7 +107,7 @@ export default function QuestionBank({ onBack, onNavigate }) {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.iconButton} onPress={toggleLang}>
                         <Languages color="#fff" size={24} />
-                        {lang === 'hi' && <View style={styles.langIndicator} />}
+                        {language === 'hi' && <View style={styles.langIndicator} />}
                     </TouchableOpacity>
                 </View>
 
@@ -133,13 +135,13 @@ export default function QuestionBank({ onBack, onNavigate }) {
                     {/* Breadcrumb & Toggle */}
                     <View style={styles.controlsRow}>
                         <Text style={styles.breadcrumb}>
-                            {lang === 'hi' ? 'हिमाचल प्रदेश' : 'Himachal Pradesh'} / <Text style={styles.activeBreadcrumb}>{lang === 'hi' ? 'प्रश्न बैंक' : 'Question Bank'}</Text>
+                            {useTranslation('Himachal Pradesh')} / <Text style={styles.activeBreadcrumb}>{useTranslation('Question Bank')}</Text>
                         </Text>
                         <View style={styles.toggleContainer}>
-                            <Text style={styles.toggleLabel}>{lang === 'hi' ? 'विषय' : 'Topics'}</Text>
+                            <Text style={styles.toggleLabel}>{useTranslation('Topics')}</Text>
                             <Switch
-                                trackColor={{ false: "#767577", true: "#818cf8" }}
-                                thumbColor={topicsEnabled ? "#4f46e5" : "#f4f3f4"}
+                                trackColor={{ false: "#767577", true: "#86efac" }}
+                                thumbColor={topicsEnabled ? "#16a34a" : "#f4f3f4"}
                                 onValueChange={() => setTopicsEnabled(!topicsEnabled)}
                                 value={topicsEnabled}
                                 style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
@@ -151,7 +153,8 @@ export default function QuestionBank({ onBack, onNavigate }) {
                     <View style={styles.listContainer}>
                         {displayTopics.map((topic, index) => {
                             const Icon = topic.icon || Globe2;
-                            const title = lang === 'hi' ? (topic.title_hi || topic.title) : (topic.title_en || topic.title);
+                            const title = language === 'hi' ? (topic.title_hi || topic.title) : (topic.title_en || topic.title);
+                            const displayTitle = useTranslation(title);
                             const number = topic.number || (index + 1).toString().padStart(2, '0');
 
                             return (
@@ -165,9 +168,9 @@ export default function QuestionBank({ onBack, onNavigate }) {
                                         <View style={styles.textContainer}>
                                             <Text style={styles.topicTitle}>
                                                 <Text style={styles.topicNumber}>{number} </Text>
-                                                {title}
+                                                {displayTitle}
                                             </Text>
-                                            <Text style={styles.topicDesc}>{topic.description}</Text>
+                                            <Text style={styles.topicDesc}>{useTranslation(topic.description)}</Text>
                                         </View>
                                         <View style={styles.iconCircle}>
                                             <Icon color="#fff" size={24} />
@@ -179,8 +182,8 @@ export default function QuestionBank({ onBack, onNavigate }) {
                                     </View>
 
                                     <View style={styles.cardFooter}>
-                                        <Text style={styles.scoreText}>Guess Score : {topic.score || '0.00%'}</Text>
-                                        <Text style={styles.questionsText}>{topic.questions || '0 Questions'}</Text>
+                                        <Text style={styles.scoreText}>{useTranslation('Guess Score')} : {topic.score || '0.00%'}</Text>
+                                        <Text style={styles.questionsText}>{topic.questions || `0 ${useTranslation('Questions')}`}</Text>
                                     </View>
                                 </TouchableOpacity>
                             );
@@ -197,35 +200,18 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
-    headerBackgroundContainer: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 300,
-        overflow: 'hidden',
-    },
     headerBackground: {
         width: width,
-        height: 300, // Taller to accommodate curve
-        backgroundColor: '#f3e8ff', // Light purple bg
+        height: 300,
+        backgroundColor: '#dcfce7', // Light green bg
         borderBottomRightRadius: width / 2,
         borderBottomLeftRadius: width / 2,
-        transform: [{ scaleX: 1.5 }], // Widen to make the curve gentler
-    },
-    safeArea: {
-        flex: 1,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        marginTop: Platform.OS === 'android' ? 40 : 10,
+        transform: [{ scaleX: 1.5 }],
     },
     iconButton: {
         width: 40,
         height: 40,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -238,169 +224,68 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: '#4ade80',
+        backgroundColor: '#facc15',
         borderWidth: 1.5,
-        borderColor: '#6366f1',
-    },
-    illustrationContainer: {
-        height: 180,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    illustrationPlaceHolder: {
-        width: 120,
-        height: 100,
-        justifyContent: 'center',
-        alignItems: 'center',
+        borderColor: '#16a34a',
     },
     monitor: {
         width: 80,
         height: 60,
-        backgroundColor: '#4338ca',
+        backgroundColor: '#15803d',
         borderRadius: 8,
         borderWidth: 4,
-        borderColor: '#312e81',
+        borderColor: '#14532d',
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    screen: {
-        width: '80%',
-        height: '80%',
-        backgroundColor: '#fff',
     },
     base: {
         width: 40,
         height: 10,
-        backgroundColor: '#312e81',
+        backgroundColor: '#14532d',
         marginTop: 5,
         borderBottomLeftRadius: 4,
         borderBottomRightRadius: 4,
     },
-    floatingIconLeft: {
-        position: 'absolute',
-        top: -20,
-        left: -20,
-        backgroundColor: '#fff',
-        padding: 8,
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 4,
-    },
-    floatingIconRight: {
-        position: 'absolute',
-        top: 10,
-        right: -30,
-        backgroundColor: '#fff',
-        padding: 8,
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 4,
-    },
-    scrollContent: {
-        paddingBottom: 40,
-    },
-    controlsRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        marginBottom: 20,
-    },
-    breadcrumb: {
-        fontSize: 14,
-        color: '#1e293b',
-        fontWeight: '600',
-    },
     activeBreadcrumb: {
-        color: '#6366f1',
-    },
-    toggleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    toggleLabel: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#1e293b',
-    },
-    listContainer: {
-        paddingHorizontal: 20,
-        gap: 16,
+        color: '#16a34a',
     },
     topicCard: {
         backgroundColor: '#fff',
         borderRadius: 12,
         padding: 16,
         borderWidth: 1,
-        borderColor: '#e0e7ff',
-        shadowColor: '#6366f1',
+        borderColor: '#bbf7d0',
+        shadowColor: '#16a34a',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.05,
         shadowRadius: 8,
         elevation: 3,
     },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 16,
-    },
-    textContainer: {
-        flex: 1,
-        paddingRight: 16,
-    },
-    topicTitle: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#1e293b',
-        marginBottom: 6,
-    },
     topicNumber: {
-        color: '#6366f1',
+        color: '#16a34a',
         fontWeight: '800',
-    },
-    topicDesc: {
-        fontSize: 12,
-        color: '#64748b',
-        lineHeight: 18,
     },
     iconCircle: {
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    progressTrack: {
-        height: 4,
-        backgroundColor: '#f1f5f9',
-        borderRadius: 2,
-        marginBottom: 12,
-        overflow: 'hidden',
-    },
     progressBar: {
         height: '100%',
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         borderRadius: 2,
-    },
-    cardFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
     },
     scoreText: {
         fontSize: 12,
-        color: '#6366f1',
+        color: '#16a34a',
         fontWeight: '600',
     },
     questionsText: {
         fontSize: 12,
-        color: '#6366f1',
+        color: '#16a34a',
         fontWeight: '600',
     },
 });

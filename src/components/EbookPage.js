@@ -69,10 +69,13 @@ const BOOKS = [
     },
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function EbookPage({ onNavigate }) {
     const [categories, setCategories] = useState([]);
     const [books, setBooks] = useState([]);
     const [featuredBook, setFeaturedBook] = useState(null);
+    const { useTranslation } = useLanguage();
 
     useEffect(() => {
         const fetchEbooks = async () => {
@@ -116,7 +119,7 @@ export default function EbookPage({ onNavigate }) {
                             </TouchableOpacity>
                             <View>
                                 <Text style={styles.headerTitle}>VetPathshala Education</Text>
-                                <Text style={styles.headerSubtitle}>Welcome Back Nikhil</Text>
+                                <Text style={styles.headerSubtitle}>{useTranslation('Welcome Back')} Nikhil</Text>
                             </View>
                         </View>
                         <View style={styles.headerRight}>
@@ -145,7 +148,7 @@ export default function EbookPage({ onNavigate }) {
                     <Search color="#94a3b8" size={20} />
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Search book here.."
+                        placeholder={useTranslation("Search book here..")}
                         placeholderTextColor="#94a3b8"
                     />
                 </View>
@@ -165,7 +168,7 @@ export default function EbookPage({ onNavigate }) {
                             <Text style={styles.bannerTitle}>{featuredBook.title}</Text>
                             <Text style={styles.bannerAuthor}>by {featuredBook.author}</Text>
                             <TouchableOpacity style={styles.exploreButton}>
-                                <Text style={styles.exploreText}>Explore Now</Text>
+                                <Text style={styles.exploreText}>{useTranslation('Explore Now')}</Text>
                             </TouchableOpacity>
                         </View>
                     </LinearGradient>
@@ -173,7 +176,7 @@ export default function EbookPage({ onNavigate }) {
 
                 {/* Choose Subject */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Choose Subject.</Text>
+                    <Text style={styles.sectionTitle}>{useTranslation('Choose Subject.')}</Text>
                     <ArrowRight color="#faa935" size={20} />
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.subjectScroll}>
@@ -189,7 +192,7 @@ export default function EbookPage({ onNavigate }) {
 
                 {/* Continue Reading */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Continue Reading</Text>
+                    <Text style={styles.sectionTitle}>{useTranslation('Continue Reading')}</Text>
                     <ArrowRight color="#faa935" size={20} />
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.bookScroll}>
@@ -205,7 +208,7 @@ export default function EbookPage({ onNavigate }) {
 
                 {/* Trending Books */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Trending Books</Text>
+                    <Text style={styles.sectionTitle}>{useTranslation('Trending Books')}</Text>
                     <ArrowRight color="#faa935" size={20} />
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.bookScroll}>
@@ -215,7 +218,7 @@ export default function EbookPage({ onNavigate }) {
                                 {book.is_premium && (
                                     <View style={styles.premiumBadge}>
                                         <Crown color="#fff" size={10} />
-                                        <Text style={styles.premiumText}>Premium</Text>
+                                        <Text style={styles.premiumText}>{useTranslation('Premium')}</Text>
                                     </View>
                                 )}
                                 <Text style={styles.coverTitleLarge}>{book.title}</Text>
@@ -228,7 +231,7 @@ export default function EbookPage({ onNavigate }) {
                                     <Text style={styles.ratingText}>{book.rating}</Text>
                                     <View style={[styles.priceTag, parseFloat(book.price) === 0 ? styles.freeTag : styles.paidTag]}>
                                         <Text style={[styles.priceText, parseFloat(book.price) === 0 ? styles.freeText : styles.paidText]}>
-                                            {parseFloat(book.price) === 0 ? 'Free' : `Rs.${book.price}`}
+                                            {parseFloat(book.price) === 0 ? useTranslation('Free') : `Rs.${book.price}`}
                                         </Text>
                                     </View>
                                 </View>
@@ -239,7 +242,7 @@ export default function EbookPage({ onNavigate }) {
 
                 {/* Popular Books */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Popular Books</Text>
+                    <Text style={styles.sectionTitle}>{useTranslation('Popular Books')}</Text>
                     <ArrowRight color="#faa935" size={20} />
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.bookScroll}>
@@ -249,7 +252,7 @@ export default function EbookPage({ onNavigate }) {
                                 {book.isPremium && (
                                     <View style={styles.premiumBadge}>
                                         <Crown color="#fff" size={10} />
-                                        <Text style={styles.premiumText}>Premium</Text>
+                                        <Text style={styles.premiumText}>{useTranslation('Premium')}</Text>
                                     </View>
                                 )}
                                 <Text style={styles.coverTitleLarge}>{book.title}</Text>
@@ -262,7 +265,7 @@ export default function EbookPage({ onNavigate }) {
                                     <Text style={styles.ratingText}>{book.rating}</Text>
                                     <View style={[styles.priceTag, book.price === 'Free' ? styles.freeTag : styles.paidTag]}>
                                         <Text style={[styles.priceText, book.price === 'Free' ? styles.freeText : styles.paidText]}>
-                                            {book.price}
+                                            {book.price === 'Free' ? useTranslation('Free') : book.price}
                                         </Text>
                                     </View>
                                 </View>
@@ -276,23 +279,23 @@ export default function EbookPage({ onNavigate }) {
             <View style={styles.bottomNav}>
                 <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('dashboard')}>
                     <Home color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>Home</Text>
+                    <Text style={styles.navLabel}>{useTranslation('Home')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
-                    <BookOpen color="#1e293b" size={24} fill="#1e293b" />
-                    <Text style={[styles.navLabel, { color: '#1e293b', fontWeight: '700' }]}>Ebook</Text>
+                    <BookOpen color="#16a34a" size={24} fill="#16a34a" />
+                    <Text style={[styles.navLabel, { color: '#16a34a', fontWeight: '700' }]}>{useTranslation('Ebook')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
                     <Pill color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>Drug Index</Text>
+                    <Text style={styles.navLabel}>{useTranslation('Drug Index')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
                     <Crown color="#f59e0b" size={24} />
-                    <Text style={styles.navLabel}>Store</Text>
+                    <Text style={styles.navLabel}>{useTranslation('Store')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
                     <Settings color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>Settings</Text>
+                    <Text style={styles.navLabel}>{useTranslation('Settings')}</Text>
                 </TouchableOpacity>
             </View>
         </View>

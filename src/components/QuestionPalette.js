@@ -182,8 +182,8 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     gridItemActive: {
-        backgroundColor: '#6366f1',
-        borderColor: '#6366f1',
+        backgroundColor: '#16a34a',
+        borderColor: '#16a34a',
     },
     gridText: {
         color: '#0f172a',

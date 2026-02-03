@@ -82,8 +82,10 @@ const QUESTIONS = [
     }
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function QuestionList({ onBack, onNavigate, chapterId, chapterName, token, title }) {
-    const [lang, setLang] = useState('hi');
+    const { useTranslation, language, setLanguage } = useLanguage();
     const [questions, setQuestions] = useState([]);
     const [bookmarkedFilter, setBookmarkedFilter] = useState(false);
     const [pyqFilter, setPyqFilter] = useState(false);
@@ -110,10 +112,12 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
         fetchQuestions();
     }, [chapterId, bookmarkedFilter, pyqFilter, token]);
 
-    const toggleLang = () => setLang(prev => prev === 'en' ? 'hi' : 'en');
+    const toggleLang = () => {
+        setLanguage(language === 'en' ? 'hi' : 'en');
+    };
 
     const displayQuestions = questions.length > 0 ? questions : QUESTIONS;
-    const displayTitle = title || chapterName || "Questions";
+    const displayTitle = title || chapterName || useTranslation("Questions");
 
     return (
         <SafeAreaView style={styles.container}>
@@ -125,14 +129,14 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
                 <Text style={styles.headerTitle}>{displayTitle}</Text>
                 <TouchableOpacity style={styles.iconButton} onPress={toggleLang}>
                     <Languages color="#fff" size={24} />
-                    {lang === 'hi' && <View style={styles.langIndicator} />}
+                    {language === 'hi' && <View style={styles.langIndicator} />}
                 </TouchableOpacity>
             </View>
 
             {/* Breadcrumb - Fixed at top */}
             <View style={styles.breadcrumbContainer}>
                 <Text style={styles.breadcrumb}>
-                    {lang === 'hi' ? 'हिमाचल प्रदेश / प्रश्न बैंक' : 'Himachal Pradesh / Question Bank'} / {displayTitle}
+                    {useTranslation('Himachal Pradesh')} / {useTranslation('Question Bank')} / {displayTitle}
                 </Text>
             </View>
 
@@ -140,7 +144,7 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
                 {/* Search Bar */}
                 <View style={styles.searchBar}>
                     <TextInput
-                        placeholder={lang === 'hi' ? "खोज" : "Search"}
+                        placeholder={useTranslation("Search")}
                         style={styles.searchInput}
                         placeholderTextColor="#94a3b8"
                     />
@@ -154,11 +158,11 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
                         onPress={() => setBookmarkedFilter(!bookmarkedFilter)}
                     >
                         {bookmarkedFilter ? (
-                            <CheckSquare color="#6366f1" size={20} />
+                            <CheckSquare color="#16a34a" size={20} />
                         ) : (
                             <Square color="#94a3b8" size={20} />
                         )}
-                        <Text style={styles.filterLabel}>{lang === 'hi' ? 'बुकमार्क किया गया' : 'Bookmarked'}</Text>
+                        <Text style={styles.filterLabel}>{useTranslation('Bookmarked')}</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -166,7 +170,7 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
                         onPress={() => setPyqFilter(!pyqFilter)}
                     >
                         {pyqFilter ? (
-                            <CheckSquare color="#6366f1" size={20} />
+                            <CheckSquare color="#16a34a" size={20} />
                         ) : (
                             <Square color="#94a3b8" size={20} />
                         )}
@@ -186,11 +190,11 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
                 {/* Results Header */}
                 <View style={styles.resultsHeader}>
                     <Text style={styles.resultsText}>
-                        {lang === 'hi' ? `${displayQuestions.length} परिणाम मिला` : `${displayQuestions.length} Results Found`}
+                        {displayQuestions.length} {useTranslation('Results Found')}
                     </Text>
                     <View style={styles.scoreBadge}>
                         <Text style={styles.scoreText}>
-                            {lang === 'hi' ? 'अनुमान स्कोर: 100%' : 'Guess Score: 100%'}
+                            {useTranslation('Guess Score')}: 100%
                         </Text>
                     </View>
                 </View>
@@ -226,30 +230,30 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
 
                             <View style={styles.actionsRow}>
                                 <TouchableOpacity style={styles.actionItem}>
-                                    <ThumbsUp color={q.interaction?.is_liked ? "#6366f1" : "#94a3b8"} size={16} />
+                                    <ThumbsUp color={q.interaction?.is_liked ? "#16a34a" : "#94a3b8"} size={16} />
                                     <Text style={styles.actionText}>
-                                        {lang === 'hi' ? 'लाइक' : 'Like'} {q.likes || 0}
+                                        {useTranslation('Like')} {q.likes || 0}
                                     </Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity style={styles.actionItem}>
-                                    <Eye color="#6366f1" size={16} />
+                                    <Eye color="#16a34a" size={16} />
                                     <Text style={styles.actionText}>
-                                        {lang === 'hi' ? 'देखें' : 'View'} {q.views || 0}
+                                        {useTranslation('View')} {q.views || 0}
                                     </Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity style={styles.actionItem} onPress={() => setReportVisible(true)}>
-                                    <Flag color={q.interaction?.is_reported ? "#ef4444" : "#6366f1"} size={16} />
+                                    <Flag color={q.interaction?.is_reported ? "#ef4444" : "#16a34a"} size={16} />
                                     <Text style={styles.actionText}>
-                                        {lang === 'hi' ? 'रिपोर्ट' : 'Report'} {q.reports || 0}
+                                        {useTranslation('Report')} {q.reports || 0}
                                     </Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity style={styles.actionItem}>
-                                    <FileEdit color="#6366f1" size={16} />
+                                    <FileEdit color="#16a34a" size={16} />
                                     <Text style={styles.actionText}>
-                                        {lang === 'hi' ? 'नोट्स' : 'Notes'} {q.notes || 0}
+                                        {useTranslation('Notes')} {q.notes || 0}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -293,7 +297,7 @@ const styles = StyleSheet.create({
     iconButton: {
         width: 40,
         height: 40,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a', // Green
         borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -306,89 +310,28 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: '#4ade80',
+        backgroundColor: '#facc15',
         borderWidth: 1.5,
-        borderColor: '#6366f1',
-    },
-    breadcrumbContainer: {
-        paddingHorizontal: 20,
-        paddingBottom: 10,
-    },
-    breadcrumb: {
-        fontSize: 12,
-        color: '#334155',
-    },
-    searchFilterContainer: {
-        paddingHorizontal: 20,
-        paddingBottom: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f1f5f9',
-    },
-    searchBar: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderColor: '#e2e8f0',
-        borderRadius: 12,
-        paddingHorizontal: 16,
-        height: 50,
-        marginBottom: 16,
-    },
-    searchInput: {
-        flex: 1,
-        fontSize: 16,
-        color: '#1e293b',
-    },
-    filterRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    checkboxContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    filterLabel: {
-        fontSize: 14,
-        color: '#0f172a',
-        fontWeight: '500',
+        borderColor: '#16a34a',
     },
     filterButton: {
         width: 40,
         height: 36,
-        backgroundColor: '#818cf8',
+        backgroundColor: '#16a34a',
         borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    scrollContent: {
-        paddingBottom: 40,
-        paddingHorizontal: 20,
-    },
-    resultsHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginVertical: 16,
-    },
-    resultsText: {
-        fontSize: 16,
-        fontWeight: '800',
-        fontStyle: 'italic',
-        color: '#0f172a',
-    },
     scoreBadge: {
-        backgroundColor: '#fff',
+        backgroundColor: '#f0fdf4',
         borderWidth: 1,
-        borderColor: '#c7d2fe',
+        borderColor: '#bbf7d0',
         borderRadius: 6,
         paddingHorizontal: 8,
         paddingVertical: 4,
     },
     scoreText: {
-        color: '#6366f1',
+        color: '#16a34a',
         fontSize: 12,
         fontWeight: '600',
     },

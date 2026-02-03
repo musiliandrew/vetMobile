@@ -18,15 +18,20 @@ import { API_BASE } from '../api';
 
 const { width } = Dimensions.get('window');
 
-export default function OTPVerification({ phone = '+919876543210', onVerify, onBack }) {
+import { useLanguage } from '../context/LanguageContext';
+
+export default function OTPVerification({ email = '', onVerify, onBack }) {
     const [otp, setOtp] = useState(['', '', '', '']);
-    const [timer, setTimer] = useState(22);
+    const [timer, setTimer] = useState(60);
     const [loading, setLoading] = useState(false);
     const inputRefs = useRef([]);
+    const { useTranslation } = useLanguage();
 
-    // Auto-send OTP on mount for demo
     useEffect(() => {
-        sendOtp();
+        // Auto-send OTP on mount
+        if (email) {
+            sendOtp();
+        }
     }, []);
 
     useEffect(() => {
@@ -38,55 +43,100 @@ export default function OTPVerification({ phone = '+919876543210', onVerify, onB
 
     const sendOtp = async () => {
         try {
-            console.log('Sending OTP to:', phone);
-            const res = await axios.post(`${API_BASE}/send-otp/`, { phone });
-            if (res.data.otp) {
-                Alert.alert('Demo Mode', `Your OTP is: ${res.data.otp}`);
+            console.log('Sending OTP to:', email);
+            const res = await fetch(`${API_BASE}/users/send-otp/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                Alert.alert(
+                    useTranslation('OTP Sent'),
+                    useTranslation('Please check your email for the verification code.')
+                );
+            } else {
+                Alert.alert(
+                    useTranslation('Error'),
+                    data.error || useTranslation('Failed to send OTP')
+                );
             }
         } catch (err) {
             console.log('Error sending OTP:', err);
+            Alert.alert(
+                useTranslation('Error'),
+                useTranslation('Failed to connect to server')
+            );
         }
     };
 
     const handleVerify = async () => {
         const code = otp.join('');
         if (code.length < 4) {
-            Alert.alert('Invalid Code', 'Please enter a 4-digit code.');
+            Alert.alert(
+                useTranslation('Invalid Code'),
+                useTranslation('Please enter a 4-digit code.')
+            );
             return;
         }
 
         setLoading(true);
         try {
-            const res = await axios.post(`${API_BASE}/verify-otp/`, {
-                phone,
-                otp: code
+            const res = await fetch(`${API_BASE}/users/verify-otp/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    otp: code
+                })
             });
+            const data = await res.json();
 
-            if (res.data.verified) {
-                onVerify(code);
+            if (res.ok && data.verified) {
+                Alert.alert(
+                    useTranslation('Success'),
+                    useTranslation('Email verified successfully!')
+                );
+                onVerify(data);
+            } else {
+                Alert.alert(
+                    useTranslation('Verification Failed'),
+                    data.error || useTranslation('Invalid OTP. Please try again.')
+                );
+                setOtp(['', '', '', '']);
+                inputRefs.current[0]?.focus();
             }
         } catch (err) {
-            Alert.alert('Verification Failed', 'Invalid OTP. Please try again.');
+            console.error('Verification error:', err);
+            Alert.alert(
+                useTranslation('Error'),
+                useTranslation('Failed to verify OTP')
+            );
             setOtp(['', '', '', '']);
-            inputRefs.current[0].focus();
+            inputRefs.current[0]?.focus();
         } finally {
             setLoading(false);
         }
     };
 
     const handleChange = (text, index) => {
-        if (text.length > 1) return;
+        if (text.length > 1) {
+            text = text.charAt(0);
+        }
+
         const newOtp = [...otp];
         newOtp[index] = text;
         setOtp(newOtp);
+
         if (text && index < 3) {
-            inputRefs.current[index + 1].focus();
+            inputRefs.current[index + 1]?.focus();
         }
     };
 
     const handleBackspace = (e, index) => {
         if (e.nativeEvent.key === 'Backspace' && !otp[index] && index > 0) {
-            inputRefs.current[index - 1].focus();
+            inputRefs.current[index - 1]?.focus();
         }
     };
 
@@ -107,13 +157,14 @@ export default function OTPVerification({ phone = '+919876543210', onVerify, onB
                         resizeMode="contain"
                     />
 
-                    <Text style={styles.title}>Verification</Text>
+                    <Text style={styles.title}>{useTranslation('Verification')}</Text>
                     <Text style={styles.subtitle}>
-                        We've sent a 4-digit code to your mobile number
+                        {useTranslation("We've sent a 4-digit code to")}
                     </Text>
+                    <Text style={styles.emailText}>{email}</Text>
 
                     <View style={styles.card}>
-                        <Text style={styles.label}>Enter OTP</Text>
+                        <Text style={styles.label}>{useTranslation('Enter OTP')}</Text>
 
                         <View style={styles.otpContainer}>
                             {otp.map((digit, index) => (
@@ -133,16 +184,16 @@ export default function OTPVerification({ phone = '+919876543210', onVerify, onB
                         </View>
 
                         <View style={styles.resendContainer}>
-                            <Text style={styles.resendText}>Didn't receive code? </Text>
+                            <Text style={styles.resendText}>{useTranslation("Didn't receive code?")} </Text>
                             <TouchableOpacity
                                 disabled={timer > 0 || loading}
                                 onPress={() => {
-                                    setTimer(22);
+                                    setTimer(60);
                                     sendOtp();
                                 }}
                             >
                                 <Text style={[styles.resendLink, timer === 0 && styles.resendActive]}>
-                                    Resend{timer > 0 ? ` (${timer}s)` : ''}
+                                    {useTranslation('Resend')}{timer > 0 ? ` (${timer}s)` : ''}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -155,14 +206,14 @@ export default function OTPVerification({ phone = '+919876543210', onVerify, onB
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.verifyButtonText}>Verify Now</Text>
+                                <Text style={styles.verifyButtonText}>{useTranslation('Verify Now')}</Text>
                             )}
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 <View style={styles.footerTextContainer}>
-                    <Text style={styles.footerText}>Learning is fun! 📚✨</Text>
+                    <Text style={styles.footerText}>{useTranslation('Learning is fun! 📚✨')}</Text>
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>
@@ -203,9 +254,16 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#4b5563',
         textAlign: 'center',
-        marginBottom: 25,
+        marginBottom: 8,
         maxWidth: '85%',
         lineHeight: 20,
+    },
+    emailText: {
+        fontSize: 15,
+        color: '#16a34a',
+        fontWeight: '700',
+        textAlign: 'center',
+        marginBottom: 25,
     },
     card: {
         backgroundColor: '#fff',
@@ -243,13 +301,14 @@ const styles = StyleSheet.create({
         color: '#1e293b',
     },
     otpInputFilled: {
-        borderColor: '#10b981',
-        backgroundColor: '#ecfdf5',
+        borderColor: '#16a34a',
+        backgroundColor: '#dcfce7',
     },
     resendContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginBottom: 25,
+        alignItems: 'center',
+        marginBottom: 20,
     },
     resendText: {
         fontSize: 14,
@@ -257,19 +316,19 @@ const styles = StyleSheet.create({
     },
     resendLink: {
         fontSize: 14,
-        color: '#10b981',
+        color: '#94a3b8',
         fontWeight: '600',
     },
     resendActive: {
-        textDecorationLine: 'underline',
+        color: '#16a34a',
     },
     verifyButton: {
-        backgroundColor: '#10b981',
+        backgroundColor: '#16a34a',
         height: 52,
         borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#10b981',
+        shadowColor: '#16a34a',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 8,

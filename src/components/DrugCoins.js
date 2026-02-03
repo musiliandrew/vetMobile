@@ -211,57 +211,15 @@ const styles = StyleSheet.create({
     },
     packageCard: {
         width: (width - 52) / 2,
-        backgroundColor: '#e0f2fe', // Light blue background
+        backgroundColor: '#f0fdf4', // Light green background
         borderRadius: 16,
         padding: 16,
         borderWidth: 1,
-        borderColor: '#bae6fd',
+        borderColor: '#bbf7d0',
         marginBottom: 8,
     },
-    packageHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: 16,
-    },
-    coinCount: {
-        fontSize: 16,
-        fontWeight: '800',
-        color: '#0f172a',
-        marginBottom: 4,
-    },
-    priceRow: {
-        flexDirection: 'row',
-        alignItems: 'baseline',
-        gap: 6,
-    },
-    originalPrice: {
-        fontSize: 10,
-        color: '#64748b',
-        textDecorationLine: 'line-through',
-    },
-    currentPrice: {
-        fontSize: 14,
-        color: '#1e293b',
-        fontWeight: '600',
-    },
-    coinStack: {
-        width: 24,
-        height: 24,
-        position: 'relative',
-    },
-    miniCoin: {
-        width: 20,
-        height: 8,
-        backgroundColor: '#facc15', // Yellow
-        borderRadius: 4,
-        borderWidth: 1,
-        borderColor: '#eab308', // Darker yellow border
-        position: 'absolute',
-        left: 2,
-    },
     buyButton: {
-        backgroundColor: '#6366f1', // Purple/Indigo button
+        backgroundColor: '#16a34a', // Green button
         paddingVertical: 10,
         borderRadius: 8,
         alignItems: 'center',

@@ -67,9 +67,11 @@ const SUB_TOPICS = [
     }
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "General Hindi" }) {
     const [subTopicsEnabled, setSubTopicsEnabled] = useState(true);
-    const [lang, setLang] = useState('en');
+    const { useTranslation, language, setLanguage } = useLanguage();
     const [subTopics, setSubTopics] = useState([]);
 
     React.useEffect(() => {
@@ -86,7 +88,7 @@ export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "
         fetchSubTopics();
     }, [subjectId]);
 
-    const toggleLang = () => setLang(prev => prev === 'en' ? 'hi' : 'en');
+    const toggleLang = () => setLanguage(language === 'en' ? 'hi' : 'en');
 
     const displaySubTopics = subTopics.length > 0 ? subTopics : SUB_TOPICS;
 
@@ -97,10 +99,10 @@ export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "
                 <TouchableOpacity style={styles.iconButton} onPress={onBack}>
                     <ChevronLeft color="#fff" size={24} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{topicName}</Text>
+                <Text style={styles.headerTitle}>{useTranslation(topicName)}</Text>
                 <TouchableOpacity style={styles.iconButton} onPress={toggleLang}>
                     <Languages color="#fff" size={24} />
-                    {lang === 'hi' && <View style={styles.langIndicator} />}
+                    {language === 'hi' && <View style={styles.langIndicator} />}
                 </TouchableOpacity>
             </View>
 
@@ -111,13 +113,13 @@ export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "
                 {/* Breadcrumb & Toggle */}
                 <View style={styles.controlsRow}>
                     <Text style={styles.breadcrumb}>
-                        {lang === 'hi' ? 'एचपी' : 'HP'} / {lang === 'hi' ? 'क्यूबैंक' : 'QBank'} / <Text style={styles.activeBreadcrumb}>{lang === 'hi' ? 'विषय' : 'Topics'}</Text>
+                        {useTranslation('HP')} / {useTranslation('QBank')} / <Text style={styles.activeBreadcrumb}>{useTranslation('Topics')}</Text>
                     </Text>
                     <View style={styles.toggleContainer}>
-                        <Text style={styles.toggleLabel}>{lang === 'hi' ? 'उप-विषय' : 'Sub-Topics'}</Text>
+                        <Text style={styles.toggleLabel}>{useTranslation('Sub-Topics')}</Text>
                         <Switch
-                            trackColor={{ false: "#767577", true: "#818cf8" }}
-                            thumbColor={subTopicsEnabled ? "#4f46e5" : "#f4f3f4"}
+                            trackColor={{ false: "#767577", true: "#86efac" }}
+                            thumbColor={subTopicsEnabled ? "#16a34a" : "#f4f3f4"}
                             onValueChange={() => setSubTopicsEnabled(!subTopicsEnabled)}
                             value={subTopicsEnabled}
                             style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
@@ -140,9 +142,9 @@ export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "
                                     <View style={styles.textContainer}>
                                         <Text style={styles.topicTitle}>
                                             <Text style={styles.topicNumber}>{number} </Text>
-                                            {topic.title}
+                                            {useTranslation(topic.title)}
                                         </Text>
-                                        <Text style={styles.topicDesc}>{topic.description}</Text>
+                                        <Text style={styles.topicDesc}>{useTranslation(topic.description)}</Text>
                                     </View>
                                     <View style={styles.iconCircle}>
                                         <Shield color="#fff" size={24} fill="#fff" />
@@ -154,8 +156,8 @@ export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "
                                 </View>
 
                                 <View style={styles.cardFooter}>
-                                    <Text style={styles.scoreText}>Guess Score : {topic.score || '0.00%'}</Text>
-                                    <Text style={styles.questionsText}>{topic.questions || '0 Questions'}</Text>
+                                    <Text style={styles.scoreText}>{useTranslation('Guess Score')} : {topic.score || '0.00%'}</Text>
+                                    <Text style={styles.questionsText}>{topic.questions || `0 ${useTranslation('Questions')}`}</Text>
                                 </View>
                             </TouchableOpacity>
                         );
@@ -188,7 +190,7 @@ const styles = StyleSheet.create({
     iconButton: {
         width: 40,
         height: 40,
-        backgroundColor: '#6366f1', // Left/Right buttons match
+        backgroundColor: '#16a34a', // Left/Right buttons match
         borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -201,110 +203,47 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: '#4ade80',
+        backgroundColor: '#facc15',
         borderWidth: 1.5,
-        borderColor: '#6366f1',
-    },
-    scrollContent: {
-        paddingBottom: 40,
-    },
-    controlsRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        marginBottom: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f1f5f9',
-        paddingBottom: 10,
-    },
-    breadcrumb: {
-        fontSize: 14,
-        color: '#1e293b',
-        fontWeight: '600',
+        borderColor: '#16a34a',
     },
     activeBreadcrumb: {
-        color: '#6366f1',
-    },
-    toggleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    toggleLabel: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#1e293b',
-    },
-    listContainer: {
-        paddingHorizontal: 20,
-        gap: 16,
+        color: '#16a34a',
     },
     topicCard: {
-        backgroundColor: '#f5f3ff', // Very light purple background
+        backgroundColor: '#f0fdf4', // Very light green background
         borderRadius: 12,
         padding: 16,
         borderWidth: 1,
-        borderColor: '#c7d2fe', // Lighter purple border
-    },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 16,
-    },
-    textContainer: {
-        flex: 1,
-        paddingRight: 16,
-    },
-    topicTitle: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#1e293b',
-        marginBottom: 6,
+        borderColor: '#bbf7d0', // Lighter green border
     },
     topicNumber: {
-        color: '#6366f1',
+        color: '#16a34a',
         fontWeight: '800',
-    },
-    topicDesc: {
-        fontSize: 12,
-        color: '#334155', // Slightly darker than gray for better readability on light purple
-        lineHeight: 18,
     },
     iconCircle: {
         width: 50,
         height: 50,
         borderRadius: 25,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 3,
-        borderColor: '#c7d2fe',
-    },
-    progressTrack: {
-        height: 4,
-        backgroundColor: '#e2e8f0',
-        borderRadius: 2,
-        marginBottom: 12,
-        overflow: 'hidden',
+        borderColor: '#bbf7d0',
     },
     progressBar: {
         height: '100%',
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         borderRadius: 2,
-    },
-    cardFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
     },
     scoreText: {
         fontSize: 12,
-        color: '#6366f1',
+        color: '#16a34a',
         fontWeight: '600',
     },
     questionsText: {
         fontSize: 12,
-        color: '#6366f1',
+        color: '#16a34a',
         fontWeight: '600',
     },
 });

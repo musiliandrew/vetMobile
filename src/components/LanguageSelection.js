@@ -42,7 +42,7 @@ export default function LanguageSelection({ onContinue }) {
                                 <Text style={styles.optionSubLabel}>{lang.subLabel}</Text>
                             </View>
                             {selectedLanguage === lang.id && (
-                                <CheckCircle2 color="#6366f1" size={24} />
+                                <CheckCircle2 color="#16a34a" size={24} />
                             )}
                         </TouchableOpacity>
                     ))}
@@ -94,52 +94,55 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#6366f1',
+        shadowColor: '#16a34a',
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.3,
+        shadowRadius: 15,
         shadowRadius: 15,
         elevation: 8,
     },
     optionsContainer: {
         width: '100%',
-        gap: 12,
-        marginBottom: 20,
+        gap: 16, // Space between language cards
     },
     option: {
-        width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 16,
-        borderRadius: 16,
-        borderWidth: 1.5,
+        justifyContent: 'space-between',
+        padding: 20,
+        borderWidth: 1,
         borderColor: '#e2e8f0',
-        backgroundColor: '#f8fafc',
-    },
-    selectedOption: {
-        borderColor: '#6366f1',
-        backgroundColor: '#f5f3ff',
+        borderRadius: 16,
+        backgroundColor: '#fff',
+        width: '100%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
     },
     optionTextContainer: {
         flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
     },
     optionLabel: {
         fontSize: 18,
         fontWeight: '700',
         color: '#1e293b',
+        marginBottom: 4,
     },
     optionSubLabel: {
-        fontSize: 16,
+        fontSize: 14,
         color: '#64748b',
-        fontWeight: '500',
+    },
+    selectedOption: {
+        borderColor: '#16a34a',
+        backgroundColor: '#f0fdf4',
     },
     continueButton: {
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         height: 56,
         borderRadius: 12,
         justifyContent: 'center',

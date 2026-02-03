@@ -50,10 +50,13 @@ const PLANS = [
     }
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function Subscription({ onBack, token }) {
     const [activeTab, setActiveTab] = useState('select'); // 'select' or 'my_sub'
     const [selectedOptions, setSelectedOptions] = useState({}); // { planId: optionId }
     const [plans, setPlans] = useState([]);
+    const { useTranslation } = useLanguage();
 
     useEffect(() => {
         const fetchPlans = async () => {
@@ -81,7 +84,7 @@ export default function Subscription({ onBack, token }) {
                 <TouchableOpacity style={styles.backButton} onPress={onBack}>
                     <ChevronLeft color="#fff" size={24} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Subscription</Text>
+                <Text style={styles.headerTitle}>{useTranslation('Subscription')}</Text>
                 <TouchableOpacity style={styles.langButton}>
                     <Languages color="#fff" size={20} />
                 </TouchableOpacity>
@@ -94,7 +97,7 @@ export default function Subscription({ onBack, token }) {
                     onPress={() => setActiveTab('select')}
                 >
                     <Text style={[styles.tabText, activeTab === 'select' && styles.activeTabText]}>
-                        Select Plan
+                        {useTranslation('Select Plan')}
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -102,7 +105,7 @@ export default function Subscription({ onBack, token }) {
                     onPress={() => setActiveTab('my_sub')}
                 >
                     <Text style={[styles.tabText, activeTab === 'my_sub' && styles.activeTabText]}>
-                        My Subscription
+                        {useTranslation('My Subscription')}
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -114,7 +117,7 @@ export default function Subscription({ onBack, token }) {
                 {activeTab === 'select' ? (
                     displayPlans.map((plan) => {
                         // For demo/compatibility, if plan.options doesn't exist, we create one
-                        const options = plan.options || [{ id: 'default', label: `${plan.duration_months} Months`, price: plan.base_price * (1 - plan.discount_percentage / 100) }];
+                        const options = plan.options || [{ id: 'default', label: `${plan.duration} ${useTranslation('Months')}`, price: plan.price }];
                         const currentOptionId = selectedOptions[plan.id] || options[0].id;
                         const currentOption = options.find(o => o.id === currentOptionId);
                         const finalPrice = Math.round(currentOption.price);
@@ -124,10 +127,10 @@ export default function Subscription({ onBack, token }) {
                                 {/* Card Header */}
                                 <View style={styles.cardHeader}>
                                     <View style={styles.badge}>
-                                        <Text style={styles.badgeText}>Hurry!! Today's Price {plan.discount_percentage}% OFF!</Text>
+                                        <Text style={styles.badgeText}>{useTranslation('Hurry!! Today\'s Price')} {plan.discount}!</Text>
                                     </View>
                                     <View style={styles.priceRow}>
-                                        <Text style={styles.strikethrough}>Rs.{plan.base_price}</Text>
+                                        <Text style={styles.strikethrough}>Rs.{plan.originalPrice}</Text>
                                         <Text style={styles.mainPrice}>
                                             Rs.{finalPrice} / {currentOption.label}
                                         </Text>
@@ -136,12 +139,12 @@ export default function Subscription({ onBack, token }) {
 
                                 {/* Card Body */}
                                 <View style={styles.cardBody}>
-                                    <Text style={styles.planTitle}>{plan.title}</Text>
-                                    <Text style={styles.planDesc}>{plan.title}</Text>
+                                    <Text style={styles.planTitle}>{useTranslation(plan.title)}</Text>
+                                    <Text style={styles.planDesc}>{useTranslation(plan.description || plan.title)}</Text>
 
                                     {/* Inclusions */}
                                     <View style={styles.dividerRow}>
-                                        <Text style={styles.dividerLabel}>Inclusions</Text>
+                                        <Text style={styles.dividerLabel}>{useTranslation('Inclusions')}</Text>
                                         <View style={styles.dividerLine} />
                                     </View>
 
@@ -149,7 +152,7 @@ export default function Subscription({ onBack, token }) {
                                         {plan.inclusions.map((inc, index) => (
                                             <View key={index} style={styles.inclusionItem}>
                                                 <CheckCircle2 color="#16a34a" size={18} fill="#dcfce7" />
-                                                <Text style={styles.inclusionText}>{inc}</Text>
+                                                <Text style={styles.inclusionText}>{useTranslation(inc)}</Text>
                                             </View>
                                         ))}
                                     </View>
@@ -169,7 +172,7 @@ export default function Subscription({ onBack, token }) {
                                                             <View style={styles.radioDot} />
                                                         </View>
                                                     ) : (
-                                                        <Circle color="#6366f1" size={16} />
+                                                        <Circle color="#94a3b8" size={16} />
                                                     )}
                                                     <Text style={styles.optionLabel}>{opt.label}</Text>
                                                 </TouchableOpacity>
@@ -179,7 +182,7 @@ export default function Subscription({ onBack, token }) {
 
                                     {/* Subscribe Button */}
                                     <TouchableOpacity style={styles.subscribeButton}>
-                                        <Text style={styles.subscribeText}>Subscribe Now</Text>
+                                        <Text style={styles.subscribeText}>{useTranslation('Subscribe Now')}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -187,7 +190,7 @@ export default function Subscription({ onBack, token }) {
                     })
                 ) : (
                     <View style={styles.emptyState}>
-                        <Text style={styles.emptyText}>No active subscriptions found.</Text>
+                        <Text style={styles.emptyText}>{useTranslation('No active subscriptions found.')}</Text>
                     </View>
                 )}
             </ScrollView>
@@ -213,7 +216,7 @@ const styles = StyleSheet.create({
         height: 40,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#4f46e5', // Icon color from image
+        backgroundColor: '#16a34a', // Icon color from image
         borderRadius: 20,
     },
     langButton: {
@@ -221,165 +224,52 @@ const styles = StyleSheet.create({
         height: 40,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#4f46e5',
+        backgroundColor: '#16a34a',
         borderRadius: 20,
     },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#16a34a', // Green title
-    },
-    tabContainer: {
-        flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: '#e2e8f0',
-    },
-    tab: {
-        flex: 1,
-        paddingVertical: 16,
-        alignItems: 'center',
-        borderBottomWidth: 2,
-        borderBottomColor: 'transparent',
-    },
     activeTab: {
-        borderBottomColor: '#4f46e5',
-    },
-    tabText: {
-        fontSize: 16,
-        color: '#64748b',
-        fontWeight: '600',
+        borderBottomColor: '#16a34a',
     },
     activeTabText: {
-        color: '#4f46e5',
-    },
-    scrollContent: {
-        padding: 20,
-        paddingBottom: 40,
+        color: '#16a34a',
     },
     planCard: {
         backgroundColor: '#fff',
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: '#e0e7ff',
+        borderColor: '#bbf7d0',
         overflow: 'hidden',
         marginBottom: 24,
-        shadowColor: '#4f46e5',
+        shadowColor: '#16a34a',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 8,
     },
     cardHeader: {
-        backgroundColor: '#6366f1', // Purple header
+        backgroundColor: '#16a34a', // Green header
         padding: 20,
         alignItems: 'center',
     },
-    badge: {
-        backgroundColor: '#fff',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 6,
-        marginBottom: 10,
-    },
     badgeText: {
-        color: '#4f46e5',
+        color: '#16a34a',
         fontSize: 12,
-        fontWeight: '700',
-    },
-    priceRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    strikethrough: {
-        color: 'rgba(255,255,255,0.7)',
-        fontSize: 14,
-        textDecorationLine: 'line-through',
-    },
-    mainPrice: {
-        color: '#fff',
-        fontSize: 16,
         fontWeight: '700',
     },
     cardBody: {
         padding: 20,
-        backgroundColor: '#f5f3ff', // Very light purple/gray bg
-    },
-    planTitle: {
-        fontSize: 16,
-        fontWeight: '800', // Bold
-        color: '#000',
-        marginBottom: 8,
-        lineHeight: 22,
-    },
-    planDesc: {
-        fontSize: 12,
-        color: '#64748b',
-        marginBottom: 12,
-    },
-    dividerRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 16,
-        gap: 8,
-    },
-    dividerLabel: {
-        fontSize: 12,
-        color: '#64748b',
-    },
-    dividerLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: '#e2e8f0',
-    },
-    inclusionsGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 16,
-        marginBottom: 20,
-    },
-    inclusionItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '45%',
-        gap: 6,
-    },
-    inclusionText: {
-        fontSize: 12,
-        color: '#1e293b',
-        fontWeight: '500',
-    },
-    optionsRow: {
-        flexDirection: 'row',
-        gap: 12,
-        marginBottom: 20,
-    },
-    optionButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderWidth: 1,
-        borderColor: '#e0e7ff',
-        borderRadius: 8,
-        backgroundColor: '#fff',
-        gap: 6,
+        backgroundColor: '#f0fdf4', // Very light green bg
     },
     optionSelected: {
-        borderColor: '#6366f1',
-        backgroundColor: '#eef2ff',
-    },
-    optionLabel: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#1e293b',
+        borderColor: '#16a34a',
+        backgroundColor: '#f0fdf4',
     },
     radioFilled: {
         width: 16,
         height: 16,
         borderRadius: 8,
         borderWidth: 2,
-        borderColor: '#6366f1',
+        borderColor: '#16a34a',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -387,10 +277,10 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
     },
     subscribeButton: {
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         borderRadius: 8,
         paddingVertical: 14,
         alignItems: 'center',

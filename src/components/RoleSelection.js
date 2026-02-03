@@ -31,17 +31,20 @@ const ROLES = [
     },
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function RoleSelection({ onContinue }) {
     const [selectedRole, setSelectedRole] = useState('pharmacist');
+    const { useTranslation } = useLanguage();
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.content}>
                 <View style={styles.header}>
                     <View style={styles.headerBar} />
-                    <Text style={styles.title}>Choose Your Role</Text>
+                    <Text style={styles.title}>{useTranslation('Choose Your Role')}</Text>
                     <Text style={styles.subtitle}>
-                        Select your profession to get personalized content
+                        {useTranslation('Select your profession to get personalized content')}
                     </Text>
                 </View>
 
@@ -66,10 +69,10 @@ export default function RoleSelection({ onContinue }) {
 
                                 <View style={styles.roleInfo}>
                                     <Text style={[styles.roleTitle, isSelected && styles.selectedText]}>
-                                        {role.title}
+                                        {useTranslation(role.title)}
                                     </Text>
                                     <Text style={styles.roleDescription} numberOfLines={1}>
-                                        {role.description}
+                                        {useTranslation(role.description)}
                                     </Text>
                                 </View>
 
@@ -87,7 +90,7 @@ export default function RoleSelection({ onContinue }) {
                     style={styles.continueButton}
                     onPress={() => onContinue(selectedRole)}
                 >
-                    <Text style={styles.continueText}>Continue</Text>
+                    <Text style={styles.continueText}>{useTranslation('Continue')}</Text>
                     <ArrowRight color="#fff" size={20} />
                 </TouchableOpacity>
             </View>
@@ -195,14 +198,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#e7f7f2',
     },
     continueButton: {
-        backgroundColor: '#00c39a', // Vibrant teal from image
+        backgroundColor: '#16a34a', // Brand Green
         height: 56,
         borderRadius: 16,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         gap: 10,
-        shadowColor: '#00c39a',
+        shadowColor: '#16a34a',
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.3,
         shadowRadius: 12,

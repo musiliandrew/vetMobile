@@ -14,24 +14,26 @@ import {
     RefreshCw,
     Send
 } from 'lucide-react-native';
+import { useLanguage } from '../context/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
-const FILTERS = [
-    { id: 'status', label: '', placeholder: 'Solved/Unsolved' }, // Top one has no label in mockup
-    { id: 'importance', label: 'Question Importance', placeholder: 'Question Importance' },
-    { id: 'level', label: 'Question Level', placeholder: 'Question Level' },
-    { id: 'type', label: 'Question Type', placeholder: 'Question Type' },
-    { id: 'media', label: 'Text/Pic', placeholder: 'Text/Pic' },
-    { id: 'cost', label: 'Free/Paid', placeholder: 'Free/Paid' },
-    { id: 'language', label: 'Language', placeholder: 'Language' },
-    { id: 'notes', label: 'Personal Notes', placeholder: 'Personal Notes' },
-    { id: 'accuracy', label: 'Correct/Incorrect', placeholder: 'Correct/Incorrect' },
-    { id: 'guess', label: 'Guess', placeholder: 'Guess' },
-];
-
 export default function FilterModal({ visible, onClose }) {
+    const { useTranslation } = useLanguage();
+
     // We won't implement actual dropdown logic for all, just the UI representation
+    const FILTERS = [
+        { id: 'status', label: '', placeholder: useTranslation('Solved/Unsolved') }, // Top one has no label in mockup
+        { id: 'importance', label: useTranslation('Question Importance'), placeholder: useTranslation('Question Importance') },
+        { id: 'level', label: useTranslation('Question Level'), placeholder: useTranslation('Question Level') },
+        { id: 'type', label: useTranslation('Question Type'), placeholder: useTranslation('Question Type') },
+        { id: 'media', label: useTranslation('Text/Pic'), placeholder: useTranslation('Text/Pic') },
+        { id: 'cost', label: useTranslation('Free/Paid'), placeholder: useTranslation('Free/Paid') },
+        { id: 'language', label: useTranslation('Language'), placeholder: useTranslation('Language') },
+        { id: 'notes', label: useTranslation('Personal Notes'), placeholder: useTranslation('Personal Notes') },
+        { id: 'accuracy', label: useTranslation('Correct/Incorrect'), placeholder: useTranslation('Correct/Incorrect') },
+        { id: 'guess', label: useTranslation('Guess'), placeholder: useTranslation('Guess') },
+    ];
 
     return (
         <Modal
@@ -44,7 +46,7 @@ export default function FilterModal({ visible, onClose }) {
                 <View style={styles.modalContainer}>
                     {/* Header */}
                     <View style={styles.header}>
-                        <Text style={styles.headerTitle}>Filter Questions</Text>
+                        <Text style={styles.headerTitle}>{useTranslation('Filter Questions')}</Text>
                         <TouchableOpacity onPress={onClose}>
                             <X color="#000" size={24} />
                         </TouchableOpacity>
@@ -69,12 +71,12 @@ export default function FilterModal({ visible, onClose }) {
                     <View style={styles.footer}>
                         <TouchableOpacity style={styles.applyButton} onPress={onClose}>
                             <Send color="#fff" size={18} style={{ transform: [{ rotate: '45deg' }] }} />
-                            <Text style={styles.applyText}>Apply</Text>
+                            <Text style={styles.applyText}>{useTranslation('Apply')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.resetButton}>
                             <RefreshCw color="#fff" size={18} />
-                            <Text style={styles.resetText}>Reset</Text>
+                            <Text style={styles.resetText}>{useTranslation('Reset')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -128,26 +130,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#f3e8ff', // Light purple
+        backgroundColor: '#f0fdf4', // Light green dropdown
         borderRadius: 8,
         paddingHorizontal: 16,
         paddingVertical: 14,
     },
-    dropdownText: {
-        fontSize: 14,
-        color: '#0f172a',
-        fontWeight: '500',
-    },
-    footer: {
-        flexDirection: 'row',
-        padding: 20,
-        gap: 12,
-        borderTopWidth: 1,
-        borderTopColor: '#f1f5f9',
-    },
     applyButton: {
         flex: 1,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',

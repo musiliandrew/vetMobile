@@ -17,7 +17,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function SelectionModal({ visible, onClose, onSelectCoins, onSelectSubscription }) {
+    const { useTranslation } = useLanguage();
     return (
         <Modal
             animationType="fade"
@@ -28,7 +31,7 @@ export default function SelectionModal({ visible, onClose, onSelectCoins, onSele
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <View style={styles.header}>
-                        <Text style={styles.modalTitle}>Choose An Option Below</Text>
+                        <Text style={styles.modalTitle}>{useTranslation('Choose An Option Below')}</Text>
                         <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                             <X color="#0f172a" size={24} />
                         </TouchableOpacity>
@@ -51,7 +54,7 @@ export default function SelectionModal({ visible, onClose, onSelectCoins, onSele
                                 <View style={styles.iconCircleCoin}>
                                     <Coins color="#f59e0b" size={32} />
                                 </View>
-                                <Text style={styles.optionTitle}>Drug Coins</Text>
+                                <Text style={styles.optionTitle}>{useTranslation('Drug Coins')}</Text>
                             </LinearGradient>
                         </TouchableOpacity>
 
@@ -71,7 +74,7 @@ export default function SelectionModal({ visible, onClose, onSelectCoins, onSele
                                 <View style={styles.iconCircleSub}>
                                     <History color="#1e293b" size={32} strokeWidth={2.5} />
                                 </View>
-                                <Text style={styles.optionTitle}>Subscription</Text>
+                                <Text style={styles.optionTitle}>{useTranslation('Subscription')}</Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>

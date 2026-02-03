@@ -57,8 +57,10 @@ const CHAPTERS = [
     }
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopicName = "General Hindi", title }) {
-    const [lang, setLang] = useState('en');
+    const { useTranslation, language, setLanguage } = useLanguage();
     const [chapters, setChapters] = useState([]);
 
     React.useEffect(() => {
@@ -75,7 +77,7 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
         fetchChapters();
     }, [subTopicId]);
 
-    const toggleLang = () => setLang(prev => prev === 'en' ? 'hi' : 'en');
+    const toggleLang = () => setLanguage(language === 'en' ? 'hi' : 'en');
 
     const displayChapters = chapters.length > 0 ? chapters : CHAPTERS;
     const displayTitle = title || subTopicName;
@@ -87,10 +89,10 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
                 <TouchableOpacity style={styles.iconButton} onPress={onBack}>
                     <ChevronLeft color="#fff" size={24} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle} numberOfLines={2}>{displayTitle}</Text>
+                <Text style={styles.headerTitle} numberOfLines={2}>{useTranslation(displayTitle)}</Text>
                 <TouchableOpacity style={styles.iconButton} onPress={toggleLang}>
                     <Languages color="#fff" size={24} />
-                    {lang === 'hi' && <View style={styles.langIndicator} />}
+                    {language === 'hi' && <View style={styles.langIndicator} />}
                 </TouchableOpacity>
             </View>
 
@@ -101,7 +103,7 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
                 {/* Breadcrumb */}
                 <View style={styles.breadcrumbContainer}>
                     <Text style={styles.breadcrumb}>
-                        {lang === 'hi' ? 'एचपी' : 'HP'} / {lang === 'hi' ? 'क्यूबैंक' : 'QBank'} / {lang === 'hi' ? 'उप-विषय' : 'Sub Topics'} / <Text style={styles.activeBreadcrumb}>{lang === 'hi' ? 'अध्याय' : 'Chapters'}</Text>
+                        {useTranslation('HP')} / {useTranslation('QBank')} / {useTranslation('Sub Topics')} / <Text style={styles.activeBreadcrumb}>{useTranslation('Chapters')}</Text>
                     </Text>
                 </View>
 
@@ -109,16 +111,16 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
                 <View style={styles.overviewCard}>
                     <View style={styles.cardHeader}>
                         <View style={styles.textContainer}>
-                            <Text style={styles.overviewTitle}>{displayTitle}</Text>
-                            <Text style={styles.overviewDesc}>The key parts of speech that form the foundation of language include nouns, pr...</Text>
+                            <Text style={styles.overviewTitle}>{useTranslation(displayTitle)}</Text>
+                            <Text style={styles.overviewDesc}>{useTranslation('The key parts of speech that form the foundation of language include nouns, pr...')}</Text>
                         </View>
                         <View style={styles.iconCircle}>
                             <Shield color="#fff" size={28} fill="#fff" />
                         </View>
                     </View>
                     <View style={styles.cardFooter}>
-                        <Text style={styles.scoreText}>Guess Score : 0.00%</Text>
-                        <Text style={styles.questionsText}>0/1 Questions</Text>
+                        <Text style={styles.scoreText}>{useTranslation('Guess Score')} : 0.00%</Text>
+                        <Text style={styles.questionsText}>0/1 {useTranslation('Questions')}</Text>
                     </View>
                 </View>
 
@@ -137,9 +139,9 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
                                     <View style={styles.textContainer}>
                                         <Text style={styles.chapterTitle}>
                                             <Text style={styles.chapterNumber}>{number} </Text>
-                                            {chapter.title}
+                                            {useTranslation(chapter.title)}
                                         </Text>
-                                        <Text style={styles.chapterDesc}>{chapter.description}</Text>
+                                        <Text style={styles.chapterDesc}>{useTranslation(chapter.description)}</Text>
                                     </View>
                                     <View style={styles.iconCircleSmall}>
                                         <Shield color="#fff" size={20} fill="#fff" />
@@ -151,8 +153,8 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
                                 </View>
 
                                 <View style={styles.cardFooter}>
-                                    <Text style={styles.scoreText}>Guess Score : {chapter.score || '0.00%'}</Text>
-                                    <Text style={styles.questionsText}>{chapter.questions || '0 Questions'}</Text>
+                                    <Text style={styles.scoreText}>{useTranslation('Guess Score')} : {chapter.score || '0.00%'}</Text>
+                                    <Text style={styles.questionsText}>{chapter.questions || `0 ${useTranslation('Questions')}`}</Text>
                                 </View>
                             </TouchableOpacity>
                         );
@@ -188,7 +190,7 @@ const styles = StyleSheet.create({
     iconButton: {
         width: 40,
         height: 40,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -201,91 +203,42 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: '#4ade80',
+        backgroundColor: '#facc15',
         borderWidth: 1.5,
-        borderColor: '#6366f1',
-    },
-    scrollContent: {
-        paddingBottom: 40,
-    },
-    breadcrumbContainer: {
-        paddingHorizontal: 20,
-        paddingBottom: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f1f5f9',
-    },
-    breadcrumb: {
-        fontSize: 14,
-        color: '#1e293b',
-        fontWeight: '600',
+        borderColor: '#16a34a',
     },
     activeBreadcrumb: {
-        color: '#6366f1',
+        color: '#16a34a',
     },
     overviewCard: {
-        backgroundColor: '#eff6ff', // Light Blue-ish tint distinct from list
+        backgroundColor: '#f0fdf4', // Light green tint
         margin: 20,
         borderRadius: 12,
         padding: 16,
         borderWidth: 1,
-        borderColor: '#bfdbfe',
-    },
-    overviewTitle: {
-        fontSize: 16,
-        fontWeight: '800',
-        color: '#0f172a',
-        marginBottom: 6,
-    },
-    overviewDesc: {
-        fontSize: 12,
-        color: '#334155',
-        lineHeight: 18,
-    },
-    listContainer: {
-        paddingHorizontal: 20,
-        gap: 16,
+        borderColor: '#bbf7d0',
     },
     chapterCard: {
-        backgroundColor: '#f5f3ff', // Light purple
+        backgroundColor: '#f0fdf4', // Light green
         borderRadius: 12,
         padding: 16,
         borderWidth: 1,
-        borderColor: '#c7d2fe',
-    },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 16,
-    },
-    textContainer: {
-        flex: 1,
-        paddingRight: 16,
-    },
-    chapterTitle: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#1e293b',
-        marginBottom: 6,
+        borderColor: '#bbf7d0',
     },
     chapterNumber: {
-        color: '#6366f1',
+        color: '#16a34a',
         fontWeight: '800',
-    },
-    chapterDesc: {
-        fontSize: 12,
-        color: '#334155',
-        lineHeight: 18,
     },
     iconCircle: {
         width: 60,
         height: 60,
         borderRadius: 30,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 3,
         borderColor: '#fff',
-        shadowColor: '#6366f1',
+        shadowColor: '#16a34a',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 4,
@@ -295,36 +248,25 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 3,
-        borderColor: '#c7d2fe',
-    },
-    progressTrack: {
-        height: 4,
-        backgroundColor: '#e2e8f0',
-        borderRadius: 2,
-        marginBottom: 12,
-        overflow: 'hidden',
+        borderColor: '#bbf7d0',
     },
     progressBar: {
         height: '100%',
-        backgroundColor: '#6366f1',
+        backgroundColor: '#16a34a',
         borderRadius: 2,
-    },
-    cardFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
     },
     scoreText: {
         fontSize: 12,
-        color: '#6366f1',
+        color: '#16a34a',
         fontWeight: '600',
     },
     questionsText: {
         fontSize: 12,
-        color: '#6366f1',
+        color: '#16a34a',
         fontWeight: '600',
     },
 });

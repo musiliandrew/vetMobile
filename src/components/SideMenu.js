@@ -50,7 +50,7 @@ const MENU_SECTIONS = [
     {
         title: 'Main Menu',
         items: [
-            { id: 'dashboard', label: 'Dashboard', icon: Home, color: '#ef4444', navigateTo: 'dashboard' },
+            { id: 'dashboard', label: 'Dashboard', icon: Home, color: '#16a34a', navigateTo: 'dashboard' },
             { id: 'qbank', label: 'Question Bank', navigateTo: 'ebook' }, // Mapping for demo
             { id: 'ebooks', label: 'Ebooks', navigateTo: 'ebook' },
             { id: 'shortnotes', label: 'Short Notes' },
@@ -108,7 +108,11 @@ const MENU_SECTIONS = [
     }
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 export default function SideMenu({ visible, onClose, userName = "Rohan Rai", email = "vetstudywithnk@gmail.com", onNavigate }) {
+    const { useTranslation } = useLanguage();
+
     if (!visible) return null;
 
     return (
@@ -137,7 +141,7 @@ export default function SideMenu({ visible, onClose, userName = "Rohan Rai", ema
                             <Text style={styles.profileName} numberOfLines={1}>{userName}..............</Text>
                             <Text style={styles.profileEmail} numberOfLines={1}>{email}</Text>
                             <TouchableOpacity>
-                                <Text style={styles.viewProfile}>View Profile</Text>
+                                <Text style={styles.viewProfile}>{useTranslation('View Profile')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -149,7 +153,7 @@ export default function SideMenu({ visible, onClose, userName = "Rohan Rai", ema
                     >
                         {MENU_SECTIONS.map((section, index) => (
                             <View key={index} style={styles.section}>
-                                <Text style={styles.sectionTitle}>{section.title}</Text>
+                                <Text style={styles.sectionTitle}>{useTranslation(section.title)}</Text>
                                 {section.items.map((item) => {
                                     const Icon = item.icon;
                                     return (
@@ -176,7 +180,7 @@ export default function SideMenu({ visible, onClose, userName = "Rohan Rai", ema
                                                     item.id === 'dashboard' && styles.activeLabel,
                                                     !Icon && styles.indentedLabel
                                                 ]}>
-                                                    {item.label}
+                                                    {useTranslation(item.label)}
                                                 </Text>
                                             </View>
                                             <ChevronRight size={16} color="#94a3b8" />
@@ -213,7 +217,7 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
     },
     profileHeader: {
-        backgroundColor: '#0f172a', // Dark header
+        backgroundColor: '#16a34a', // Brand Green Header
         paddingTop: 50,
         paddingBottom: 20,
         paddingHorizontal: 20,
@@ -297,7 +301,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     activeLabel: {
-        color: '#ef4444',
+        color: '#16a34a',
     },
     indentedLabel: {
         marginLeft: 36, // Align with items that have icons if current item has no icon
