@@ -31,6 +31,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
         phone: ''
     });
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const { useTranslation } = useLanguage();
 
