@@ -63,6 +63,7 @@ export const LanguageProvider = ({ children }) => {
                         setTranslations(prev => ({ ...prev, [cacheKey]: result }));
                     }
                 } catch (e) {
+                    console.warn('Translation error:', e);
                     if (mounted) setTranslatedText(text);
                 }
             };
@@ -70,7 +71,7 @@ export const LanguageProvider = ({ children }) => {
             fetchTranslation();
 
             return () => { mounted = false; };
-        }, [text, language, translations]); // Re-run if text, language or cached translations change
+        }, [text, language]); // Only depend on text and language, not translations
 
         return translatedText;
     };
