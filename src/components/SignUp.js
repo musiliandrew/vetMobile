@@ -5,13 +5,13 @@ import {
     View,
     TextInput,
     TouchableOpacity,
-    SafeAreaView,
     Dimensions,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
     Image
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Eye, EyeOff, Smartphone, User, Mail, ArrowRight, ChevronDown } from 'lucide-react-native';
 import { Alert, ActivityIndicator } from 'react-native';
 import { API_BASE } from '../api';
