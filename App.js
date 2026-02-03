@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, ActivityIndicator, Dimensions, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Dimensions, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Activity, ShieldCheck, Wifi, RefreshCw } from 'lucide-react-native';
 import axios from 'axios';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
 import SplashScreen from './src/components/SplashScreen';
 import LanguageSelection from './src/components/LanguageSelection';
 import RoleSelection from './src/components/RoleSelection';
@@ -22,10 +24,11 @@ import QuestionList from './src/components/QuestionList';
 import QuizPage from './src/components/QuizPage';
 
 import { API_BASE } from './src/api';
+import { LanguageProvider, useLanguage } from './src/context/LanguageContext';
 
 const { width } = Dimensions.get('window');
-
 const API_URL = API_BASE;
+
 // Helper to wrap screen with modal
 const ScreenWrapper = ({ children, modalVisible, setModalVisible, setCurrentStep }) => (
   <>
@@ -44,8 +47,6 @@ const ScreenWrapper = ({ children, modalVisible, setModalVisible, setCurrentStep
     />
   </>
 );
-
-import { LanguageProvider, useLanguage } from './src/context/LanguageContext';
 
 function AppContent() {
   const [currentStep, setCurrentStep] = useState('splash');
@@ -84,6 +85,8 @@ function AppContent() {
     }
   }, [currentStep]);
 
+  // ALL conditional returns MUST be after all hooks!
+
   if (currentStep === 'splash') {
     return <SplashScreen onFinish={() => setCurrentStep('language')} />;
   }
@@ -98,8 +101,6 @@ function AppContent() {
       />
     );
   }
-
-  // ... (rest of the render logic remains similar, just inside AppContent)
 
   if (currentStep === 'role') {
     return (
@@ -146,12 +147,12 @@ function AppContent() {
   if (currentStep === 'otp') {
     return (
       <OTPVerification
-        onVerify={(code) => {
-          if (code.length === 4) {
-            Alert.alert('Success', 'Phone number verified!');
+        email={navParams.email || ''}
+        onVerify={(verificationData) => {
+          if (verificationData.verified) {
+            setUser(verificationData.user);
+            setNavParams({ token: verificationData.token });
             setCurrentStep('dashboard');
-          } else {
-            Alert.alert('Error', 'Please verify the code');
           }
         }}
         onBack={() => setCurrentStep('signin')}
@@ -159,149 +160,130 @@ function AppContent() {
     );
   }
 
-  if (currentStep === 'dashboard') {
-    return (
-      <ScreenWrapper
-        modalVisible={storeModalVisible}
-        setModalVisible={setStoreModalVisible}
-        setCurrentStep={setCurrentStep}
-      >
-        <Dashboard
-          userRole={role}
-          userName={user?.username || "Guest"}
-          onNavigate={navigate}
-          onOpenStore={() => setStoreModalVisible(true)}
-        />
-      </ScreenWrapper>
-    );
-  }
+  // Dashboard & Content Screens
+  const renderContent = () => {
+    switch (currentStep) {
+      case 'dashboard':
+        return (
+          <ScreenWrapper
+            modalVisible={storeModalVisible}
+            setModalVisible={setStoreModalVisible}
+            setCurrentStep={setCurrentStep}
+          >
+            <Dashboard
+              userRole={role}
+              userName={user?.username || "Guest"}
+              onNavigate={navigate}
+              onOpenStore={() => setStoreModalVisible(true)}
+            />
+          </ScreenWrapper>
+        );
+      case 'drug_center':
+        return (
+          <ScreenWrapper
+            modalVisible={storeModalVisible}
+            setModalVisible={setStoreModalVisible}
+            setCurrentStep={setCurrentStep}
+          >
+            <DrugCenter
+              onNavigate={navigate}
+              onOpenStore={() => setStoreModalVisible(true)}
+              coinBalance={user?.coin_balance}
+              userName={user?.username}
+            />
+          </ScreenWrapper>
+        );
+      case 'drug_coins':
+        return (
+          <DrugCoins
+            onBack={() => setCurrentStep('drug_center')}
+            onNavigate={navigate}
+            coinBalance={user?.coin_balance}
+          />
+        );
+      case 'subscription':
+        return (
+          <Subscription
+            onBack={() => setCurrentStep('dashboard')}
+            token={navParams.token}
+          />
+        );
+      case 'question_bank':
+        return (
+          <QuestionBank
+            onBack={() => setCurrentStep('dashboard')}
+            onNavigate={navigate}
+            token={navParams.token}
+            {...navParams}
+          />
+        );
+      case 'sub_topics':
+        return (
+          <SubTopics
+            onBack={() => setCurrentStep('question_bank')}
+            onNavigate={navigate}
+            token={navParams.token}
+            {...navParams}
+          />
+        );
+      case 'topic_chapters':
+        return (
+          <TopicChapters
+            onBack={() => setCurrentStep('sub_topics')}
+            onNavigate={navigate}
+            token={navParams.token}
+            {...navParams}
+          />
+        );
+      case 'question_list':
+        return (
+          <QuestionList
+            onBack={() => setCurrentStep('topic_chapters')}
+            onNavigate={navigate}
+            token={navParams.token}
+            {...navParams}
+          />
+        );
+      case 'quiz_page':
+        return (
+          <QuizPage
+            onBack={() => setCurrentStep('question_list')}
+            token={navParams.token}
+            {...navParams}
+          />
+        );
+      case 'ebook':
+        return (
+          <EbookPage
+            onNavigate={navigate}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
-  if (currentStep === 'drug_center') {
-    return (
-      <ScreenWrapper
-        modalVisible={storeModalVisible}
-        setModalVisible={setStoreModalVisible}
-        setCurrentStep={setCurrentStep}
-      >
-        <DrugCenter
-          onNavigate={navigate}
-          onOpenStore={() => setStoreModalVisible(true)}
-          coinBalance={user?.coin_balance}
-          userName={user?.username}
-        />
-      </ScreenWrapper>
-    );
-  }
-
-  if (currentStep === 'drug_coins') {
-    return (
-      <DrugCoins
-        onBack={() => setCurrentStep('drug_center')}
-        onNavigate={navigate}
-        coinBalance={user?.coin_balance}
-      />
-    );
-  }
-
-  if (currentStep === 'subscription') {
-    return (
-      <Subscription
-        onBack={() => setCurrentStep('dashboard')}
-        token={navParams.token}
-      />
-    );
-  }
-
-  if (currentStep === 'question_bank') {
-    return (
-      <QuestionBank
-        onBack={() => setCurrentStep('dashboard')}
-        onNavigate={navigate}
-        token={navParams.token}
-        {...navParams}
-      />
-    );
-  }
-
-  if (currentStep === 'sub_topics') {
-    return (
-      <SubTopics
-        onBack={() => setCurrentStep('question_bank')}
-        onNavigate={navigate}
-        token={navParams.token}
-        {...navParams}
-      />
-    );
-  }
-
-  if (currentStep === 'topic_chapters') {
-    return (
-      <TopicChapters
-        onBack={() => setCurrentStep('sub_topics')}
-        onNavigate={navigate}
-        token={navParams.token}
-        {...navParams}
-      />
-    );
-  }
-
-  if (currentStep === 'question_list') {
-    return (
-      <QuestionList
-        onBack={() => setCurrentStep('topic_chapters')}
-        onNavigate={navigate}
-        token={navParams.token}
-        {...navParams}
-      />
-    );
-  }
-
-  if (currentStep === 'quiz_page') {
-    return (
-      <QuizPage
-        onBack={() => setCurrentStep('question_list')}
-        token={navParams.token}
-        {...navParams}
-      />
-    );
-  }
-
-  if (currentStep === 'ebook') {
-    return (
-      <EbookPage
-        onNavigate={navigate}
-      />
-    );
-  }
-
-  return null;
-}
-
-export default function App() {
   return (
-    <LanguageProvider>
-      <AppContent />
-    </LanguageProvider>
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="auto" />
+      {renderContent()}
+    </SafeAreaView>
   );
 }
 
-// Wrapping function to include modal on top of screen content
-function ScreenWithModal({ children, modalVisible, setModalVisible, setCurrentStep }) {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+});
+
+export default function App() {
   return (
-    <>
-      {children}
-      <SelectionModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSelectCoins={() => {
-          setModalVisible(false); // Close modal before navigating
-          setCurrentStep('drug_coins');
-        }}
-        onSelectSubscription={() => {
-          setModalVisible(false); // Close modal before navigating
-          setCurrentStep('subscription');
-        }}
-      />
-    </>
-  )
+    <SafeAreaProvider>
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
+    </SafeAreaProvider>
+  );
 }

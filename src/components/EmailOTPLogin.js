@@ -26,13 +26,13 @@ const { width } = Dimensions.get('window');
 export default function EmailOTPLogin({ onVerified, onBack }) {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
-    const { useTranslation } = useLanguage();
+    const { useTranslation, t } = useLanguage();
 
     const handleSendOTP = async () => {
         if (!email || !email.includes('@')) {
             Alert.alert(
-                useTranslation('Invalid Email'),
-                useTranslation('Please enter a valid email address')
+                await t('Invalid Email'),
+                await t('Please enter a valid email address')
             );
             return;
         }
@@ -48,22 +48,22 @@ export default function EmailOTPLogin({ onVerified, onBack }) {
 
             if (res.ok) {
                 Alert.alert(
-                    useTranslation('OTP Sent'),
-                    useTranslation('Please check your email for the verification code.')
+                    await t('OTP Sent'),
+                    await t('Please check your email for the verification code.')
                 );
                 // Navigate to OTP verification screen
                 onVerified({ email, needsOTP: true });
             } else {
                 Alert.alert(
-                    useTranslation('Error'),
-                    data.error || useTranslation('Failed to send OTP')
+                    await t('Error'),
+                    data.error || await t('Failed to send OTP')
                 );
             }
         } catch (error) {
             console.error('Send OTP error:', error);
             Alert.alert(
-                useTranslation('Error'),
-                useTranslation('Failed to connect to server')
+                await t('Error'),
+                await t('Failed to connect to server')
             );
         } finally {
             setLoading(false);

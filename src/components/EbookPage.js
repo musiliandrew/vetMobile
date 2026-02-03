@@ -28,6 +28,7 @@ import {
 } from 'lucide-react-native';
 import { API_BASE } from '../api';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useLanguage, T } from '../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -218,7 +219,7 @@ export default function EbookPage({ onNavigate }) {
                                 {book.is_premium && (
                                     <View style={styles.premiumBadge}>
                                         <Crown color="#fff" size={10} />
-                                        <Text style={styles.premiumText}>{useTranslation('Premium')}</Text>
+                                        <T style={styles.premiumText}>Premium</T>
                                     </View>
                                 )}
                                 <Text style={styles.coverTitleLarge}>{book.title}</Text>
@@ -231,7 +232,7 @@ export default function EbookPage({ onNavigate }) {
                                     <Text style={styles.ratingText}>{book.rating}</Text>
                                     <View style={[styles.priceTag, parseFloat(book.price) === 0 ? styles.freeTag : styles.paidTag]}>
                                         <Text style={[styles.priceText, parseFloat(book.price) === 0 ? styles.freeText : styles.paidText]}>
-                                            {parseFloat(book.price) === 0 ? useTranslation('Free') : `Rs.${book.price}`}
+                                            {parseFloat(book.price) === 0 ? <T>Free</T> : `Rs.${book.price}`}
                                         </Text>
                                     </View>
                                 </View>

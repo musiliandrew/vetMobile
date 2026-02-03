@@ -18,6 +18,7 @@ import {
     ChevronDown
 } from 'lucide-react-native';
 import { API_BASE } from '../api';
+import { useLanguage, T } from '../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -139,20 +140,18 @@ export default function Subscription({ onBack, token }) {
 
                                 {/* Card Body */}
                                 <View style={styles.cardBody}>
-                                    <Text style={styles.planTitle}>{useTranslation(plan.title)}</Text>
-                                    <Text style={styles.planDesc}>{useTranslation(plan.description || plan.title)}</Text>
+                                    <T style={styles.planTitle}>{plan.title}</T>
+                                    <T style={styles.planDesc}>{plan.description || plan.title}</T>
 
-                                    {/* Inclusions */}
-                                    <View style={styles.dividerRow}>
-                                        <Text style={styles.dividerLabel}>{useTranslation('Inclusions')}</Text>
-                                        <View style={styles.dividerLine} />
+                                    <View style={styles.divider}>
+                                        <T style={styles.dividerLabel}>Inclusions</T>
                                     </View>
 
-                                    <View style={styles.inclusionsGrid}>
-                                        {plan.inclusions.map((inc, index) => (
-                                            <View key={index} style={styles.inclusionItem}>
-                                                <CheckCircle2 color="#16a34a" size={18} fill="#dcfce7" />
-                                                <Text style={styles.inclusionText}>{useTranslation(inc)}</Text>
+                                    <View style={styles.inclusions}>
+                                        {plan.inclusions.map((inc, i) => (
+                                            <View key={i} style={styles.inclusionItem}>
+                                                <CheckCircle2 color="#16a34a" size={16} />
+                                                <T style={styles.inclusionText}>{inc}</T>
                                             </View>
                                         ))}
                                     </View>

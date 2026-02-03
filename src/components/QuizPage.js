@@ -9,26 +9,8 @@ import {
     Dimensions,
     Platform
 } from 'react-native';
-import {
-    ChevronLeft,
-    Languages,
-    Clock,
-    Type,
-    Bookmark,
-    AlertTriangle,
-    Info,
-    ChevronUp,
-    ChevronDown,
-    Menu,
-    ArrowRight,
-    ArrowLeft,
-    ThumbsUp,
-    Eye,
-    Flag,
-    FileEdit,
-    Square,
-    CheckSquare
-} from 'lucide-react-native';
+import { ChevronLeft, Languages, Clock, Type, Bookmark, AlertTriangle, Info, ChevronUp, ChevronDown, Menu, ArrowRight, ArrowLeft, ThumbsUp, Eye, Flag, FileEdit, Square, CheckSquare } from 'lucide-react-native';
+import { useLanguage, T } from '../context/LanguageContext';
 import { API_BASE } from '../api';
 import QuestionPalette from './QuestionPalette';
 import ReportModal from './ReportModal';
@@ -108,7 +90,7 @@ export default function QuizPage({ onBack, questions = [], currentIndex = 0, tok
             >
                 {/* Question Meta Row */}
                 <View style={styles.metaRow}>
-                    <Text style={styles.counterText}>{index + 1} {useTranslation('of')} {questions.length}</Text>
+                    <Text style={styles.counterText}>{index + 1} <T>of</T> {questions.length}</Text>
                     <View style={styles.metaActions}>
                         <TouchableOpacity style={styles.metaBtn}>
                             <Type color="#fff" size={16} />

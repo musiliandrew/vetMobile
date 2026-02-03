@@ -25,7 +25,7 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
     const [timer, setTimer] = useState(60);
     const [loading, setLoading] = useState(false);
     const inputRefs = useRef([]);
-    const { useTranslation } = useLanguage();
+    const { useTranslation, t } = useLanguage();
 
     useEffect(() => {
         // Auto-send OTP on mount
@@ -53,20 +53,20 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
 
             if (res.ok) {
                 Alert.alert(
-                    useTranslation('OTP Sent'),
-                    useTranslation('Please check your email for the verification code.')
+                    await t('OTP Sent'),
+                    await t('Please check your email for the verification code.')
                 );
             } else {
                 Alert.alert(
-                    useTranslation('Error'),
-                    data.error || useTranslation('Failed to send OTP')
+                    await t('Error'),
+                    data.error || await t('Failed to send OTP')
                 );
             }
         } catch (err) {
             console.log('Error sending OTP:', err);
             Alert.alert(
-                useTranslation('Error'),
-                useTranslation('Failed to connect to server')
+                await t('Error'),
+                await t('Failed to connect to server')
             );
         }
     };
@@ -75,8 +75,8 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
         const code = otp.join('');
         if (code.length < 4) {
             Alert.alert(
-                useTranslation('Invalid Code'),
-                useTranslation('Please enter a 4-digit code.')
+                await t('Invalid Code'),
+                await t('Please enter a 4-digit code.')
             );
             return;
         }
@@ -95,14 +95,14 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
 
             if (res.ok && data.verified) {
                 Alert.alert(
-                    useTranslation('Success'),
-                    useTranslation('Email verified successfully!')
+                    await t('Success'),
+                    await t('Email verified successfully!')
                 );
                 onVerify(data);
             } else {
                 Alert.alert(
-                    useTranslation('Verification Failed'),
-                    data.error || useTranslation('Invalid OTP. Please try again.')
+                    await t('Verification Failed'),
+                    data.error || await t('Invalid OTP. Please try again.')
                 );
                 setOtp(['', '', '', '']);
                 inputRefs.current[0]?.focus();
@@ -110,8 +110,8 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
         } catch (err) {
             console.error('Verification error:', err);
             Alert.alert(
-                useTranslation('Error'),
-                useTranslation('Failed to verify OTP')
+                await t('Error'),
+                await t('Failed to verify OTP')
             );
             setOtp(['', '', '', '']);
             inputRefs.current[0]?.focus();

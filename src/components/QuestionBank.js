@@ -22,6 +22,7 @@ import {
 } from 'lucide-react-native';
 import { API_BASE } from '../api';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useLanguage, T } from '../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -154,7 +155,6 @@ export default function QuestionBank({ onBack, onNavigate }) {
                         {displayTopics.map((topic, index) => {
                             const Icon = topic.icon || Globe2;
                             const title = language === 'hi' ? (topic.title_hi || topic.title) : (topic.title_en || topic.title);
-                            const displayTitle = useTranslation(title);
                             const number = topic.number || (index + 1).toString().padStart(2, '0');
 
                             return (
@@ -168,9 +168,10 @@ export default function QuestionBank({ onBack, onNavigate }) {
                                         <View style={styles.textContainer}>
                                             <Text style={styles.topicTitle}>
                                                 <Text style={styles.topicNumber}>{number} </Text>
-                                                {displayTitle}
+                                                <T>{title}</T>
                                             </Text>
-                                            <Text style={styles.topicDesc}>{useTranslation(topic.description)}</Text>
+
+                                            <Text style={styles.topicDesc}><T>{topic.description}</T></Text>
                                         </View>
                                         <View style={styles.iconCircle}>
                                             <Icon color="#fff" size={24} />
@@ -182,8 +183,8 @@ export default function QuestionBank({ onBack, onNavigate }) {
                                     </View>
 
                                     <View style={styles.cardFooter}>
-                                        <Text style={styles.scoreText}>{useTranslation('Guess Score')} : {topic.score || '0.00%'}</Text>
-                                        <Text style={styles.questionsText}>{topic.questions || `0 ${useTranslation('Questions')}`}</Text>
+                                        <Text style={styles.scoreText}><T>Guess Score</T> : {topic.score || '0.00%'}</Text>
+                                        <Text style={styles.questionsText}>{topic.questions || <><T>{'0'}</T> <T>Questions</T></>}</Text>
                                     </View>
                                 </TouchableOpacity>
                             );

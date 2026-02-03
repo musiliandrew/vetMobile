@@ -21,7 +21,6 @@ const { width } = Dimensions.get('window');
 import { useLanguage } from '../context/LanguageContext';
 
 export default function SignUp({ onSignUp, onSignIn }) {
-    // ... (State vars remain same)
     const [formData, setFormData] = useState({
         title: 'Mr.',
         fullName: '',
@@ -33,12 +32,12 @@ export default function SignUp({ onSignUp, onSignIn }) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const { useTranslation } = useLanguage();
+    const { useTranslation, t } = useLanguage();
 
     const handleSignUp = async () => {
         const { fullName, email, password } = formData;
         if (!fullName || !email || !password) {
-            Alert.alert(useTranslation('Error'), useTranslation('All fields are required'));
+            Alert.alert(await t('Error'), await t('All fields are required'));
             return;
         }
 
@@ -57,21 +56,23 @@ export default function SignUp({ onSignUp, onSignIn }) {
             const data = await res.json();
 
             if (res.ok) {
-                Alert.alert(useTranslation('Success'), useTranslation('Account created! Please sign in.'), [
+                Alert.alert(await t('Success'), await t('Account created! Please sign in.'), [
                     { text: 'OK', onPress: onSignIn }
                 ]);
             } else {
-                Alert.alert(useTranslation('Signup Failed'), JSON.stringify(data));
+                Alert.alert(await t('Signup Failed'), JSON.stringify(data));
             }
         } catch (error) {
             console.error("Signup error:", error);
-            Alert.alert(useTranslation('Error'), useTranslation('Failed to connect to server'));
+            Alert.alert(await t('Error'), await t('Failed to connect to server'));
         } finally {
             setLoading(false);
         }
     };
 
-    // ...
+    const updateField = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -89,7 +90,15 @@ export default function SignUp({ onSignUp, onSignIn }) {
                     <View style={styles.form}>
                         {/* Name Row */}
                         <View style={styles.rowContainer}>
-                            <TouchableOpacity style={styles.titleDropdown}>
+                            <TouchableOpacity
+                                style={styles.titleDropdown}
+                                onPress={() => {
+                                    const titles = ['Mr.', 'Ms.', 'Dr.'];
+                                    const currentIndex = titles.indexOf(formData.title);
+                                    const nextIndex = (currentIndex + 1) % titles.length;
+                                    updateField('title', titles[nextIndex]);
+                                }}
+                            >
                                 <Text style={styles.titleText}>{formData.title}</Text>
                                 <ChevronDown size={14} color="#1e293b" />
                             </TouchableOpacity>
@@ -126,8 +135,17 @@ export default function SignUp({ onSignUp, onSignIn }) {
                                 placeholderTextColor="#94a3b8"
                                 value={formData.password}
                                 onChangeText={(text) => updateField('password', text)}
-                                secureTextEntry
+                                secureTextEntry={!showPassword}
                             />
+                            <TouchableOpacity
+                                onPress={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? (
+                                    <EyeOff color="#64748b" size={18} />
+                                ) : (
+                                    <Eye color="#64748b" size={18} />
+                                )}
+                            </TouchableOpacity>
                         </View>
 
                         {/* Confirm Password */}

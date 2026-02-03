@@ -83,6 +83,14 @@ export const LanguageProvider = ({ children }) => {
     );
 };
 
+// Shorthand component for translating text in JSX
+// Safe to use inside loops/map functions
+export const T = ({ children, style, ...props }) => {
+    const { useTranslation } = useLanguage();
+    const translatedText = useTranslation(children);
+    return <Text style={style} {...props}>{translatedText}</Text>;
+};
+
 export const useLanguage = () => {
     const context = useContext(LanguageContext);
     if (!context) {
@@ -90,3 +98,7 @@ export const useLanguage = () => {
     }
     return context;
 };
+
+// Also import Text from react-native for the T component
+import { Text } from 'react-native';
+
