@@ -9,15 +9,36 @@ const LANGUAGES = [
     { id: 'hi', label: 'हिंदी', subLabel: 'Hindi' },
 ];
 
+// Translations for the language selection screen itself
+const SCREEN_TRANSLATIONS = {
+    en: {
+        title: 'Choose App Language',
+        subtitle: 'Select your preferred language to continue using the app in the way that feels most comfortable to you. You can change the language anytime later in the app settings.',
+        continue: 'Continue'
+    },
+    hi: {
+        title: 'ऐप भाषा चुनें',
+        subtitle: 'अपनी पसंदीदा भाषा चुनें और ऐप का उपयोग उस तरीके से जारी रखें जो आपके लिए सबसे आरामदायक हो। आप बाद में ऐप सेटिंग्स में कभी भी भाषा बदल सकते हैं।',
+        continue: 'जारी रखें'
+    }
+};
+
 export default function LanguageSelection({ onContinue }) {
     const [selectedLanguage, setSelectedLanguage] = useState('en');
+
+    // Get current translations based on selected language
+    const t = SCREEN_TRANSLATIONS[selectedLanguage];
+
+    const handleLanguageSelect = (langId) => {
+        setSelectedLanguage(langId);
+    };
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.content}>
-                <Text style={styles.title}>Choose App Language</Text>
+                <Text style={styles.title}>{t.title}</Text>
                 <Text style={styles.subtitle}>
-                    Select your preferred language to continue using the app in the way that feels most comfortable to you. You can change the language anytime later in the app settings.
+                    {t.subtitle}
                 </Text>
 
                 <View style={styles.iconContainer}>
@@ -34,7 +55,7 @@ export default function LanguageSelection({ onContinue }) {
                                 styles.option,
                                 selectedLanguage === lang.id && styles.selectedOption
                             ]}
-                            onPress={() => setSelectedLanguage(lang.id)}
+                            onPress={() => handleLanguageSelect(lang.id)}
                             activeOpacity={0.7}
                         >
                             <View style={styles.optionTextContainer}>
@@ -54,7 +75,7 @@ export default function LanguageSelection({ onContinue }) {
                 onPress={() => onContinue(selectedLanguage)}
                 disabled={!selectedLanguage}
             >
-                <Text style={styles.continueText}>Continue</Text>
+                <Text style={styles.continueText}>{t.continue}</Text>
             </TouchableOpacity>
         </SafeAreaView>
     );
