@@ -115,7 +115,7 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
             }
         } catch (error) {
             console.error("Login error:", error);
-            Alert.alert(await t('Error'), await t('Network error. Please try again.'));
+            Alert.alert(await t('Error'), error.message || await t('Network error. Please try again.'));
         } finally {
             setLoading(false);
         }

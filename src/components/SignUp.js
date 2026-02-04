@@ -76,7 +76,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
             }
         } catch (error) {
             console.error("Signup error:", error);
-            Alert.alert(await t('Error'), await t('Failed to connect to server'));
+            Alert.alert(await t('Error'), error.message || await t('Failed to connect to server'));
         } finally {
             setLoading(false);
         }
