@@ -93,7 +93,14 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
                     otp: code
                 })
             });
-            const data = await res.json();
+            const contentType = res.headers.get("content-type");
+            let data;
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
+            }
 
             if (res.ok && data.verified) {
                 Alert.alert(
