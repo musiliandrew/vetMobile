@@ -14,7 +14,7 @@ import {
     RefreshCw,
     Send
 } from 'lucide-react-native';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, T } from '../context/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,16 +23,16 @@ export default function FilterModal({ visible, onClose }) {
 
     // We won't implement actual dropdown logic for all, just the UI representation
     const FILTERS = [
-        { id: 'status', label: '', placeholder: useTranslation('Solved/Unsolved') }, // Top one has no label in mockup
-        { id: 'importance', label: useTranslation('Question Importance'), placeholder: useTranslation('Question Importance') },
-        { id: 'level', label: useTranslation('Question Level'), placeholder: useTranslation('Question Level') },
-        { id: 'type', label: useTranslation('Question Type'), placeholder: useTranslation('Question Type') },
-        { id: 'media', label: useTranslation('Text/Pic'), placeholder: useTranslation('Text/Pic') },
-        { id: 'cost', label: useTranslation('Free/Paid'), placeholder: useTranslation('Free/Paid') },
-        { id: 'language', label: useTranslation('Language'), placeholder: useTranslation('Language') },
-        { id: 'notes', label: useTranslation('Personal Notes'), placeholder: useTranslation('Personal Notes') },
-        { id: 'accuracy', label: useTranslation('Correct/Incorrect'), placeholder: useTranslation('Correct/Incorrect') },
-        { id: 'guess', label: useTranslation('Guess'), placeholder: useTranslation('Guess') },
+        { id: 'status', label: '', placeholder: 'Solved/Unsolved' }, // Top one has no label in mockup
+        { id: 'importance', label: 'Question Importance', placeholder: 'Question Importance' },
+        { id: 'level', label: 'Question Level', placeholder: 'Question Level' },
+        { id: 'type', label: 'Question Type', placeholder: 'Question Type' },
+        { id: 'media', label: 'Text/Pic', placeholder: 'Text/Pic' },
+        { id: 'cost', label: 'Free/Paid', placeholder: 'Free/Paid' },
+        { id: 'language', label: 'Language', placeholder: 'Language' },
+        { id: 'notes', label: 'Personal Notes', placeholder: 'Personal Notes' },
+        { id: 'accuracy', label: 'Correct/Incorrect', placeholder: 'Correct/Incorrect' },
+        { id: 'guess', label: 'Guess', placeholder: 'Guess' },
     ];
 
     return (
@@ -46,7 +46,7 @@ export default function FilterModal({ visible, onClose }) {
                 <View style={styles.modalContainer}>
                     {/* Header */}
                     <View style={styles.header}>
-                        <Text style={styles.headerTitle}>{useTranslation('Filter Questions')}</Text>
+                        <T style={styles.headerTitle}>Filter Questions</T>
                         <TouchableOpacity onPress={onClose}>
                             <X color="#000" size={24} />
                         </TouchableOpacity>
@@ -56,11 +56,11 @@ export default function FilterModal({ visible, onClose }) {
                         contentContainerStyle={styles.scrollContent}
                         showsVerticalScrollIndicator={false}
                     >
-                        {FILTERS.map((filter, index) => (
+                        {FILTERS.map((filter) => (
                             <View key={filter.id} style={styles.filterGroup}>
-                                {filter.label ? <Text style={styles.label}>{filter.label}</Text> : null}
+                                {filter.label ? <T style={styles.label}>{filter.label}</T> : null}
                                 <TouchableOpacity style={styles.dropdown}>
-                                    <Text style={styles.dropdownText}>{filter.placeholder}</Text>
+                                    <T style={styles.dropdownText}>{filter.placeholder}</T>
                                     <ChevronDown size={20} color="#0f172a" />
                                 </TouchableOpacity>
                             </View>
@@ -71,12 +71,12 @@ export default function FilterModal({ visible, onClose }) {
                     <View style={styles.footer}>
                         <TouchableOpacity style={styles.applyButton} onPress={onClose}>
                             <Send color="#fff" size={18} style={{ transform: [{ rotate: '45deg' }] }} />
-                            <Text style={styles.applyText}>{useTranslation('Apply')}</Text>
+                            <T style={styles.applyText}>Apply</T>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.resetButton}>
                             <RefreshCw color="#fff" size={18} />
-                            <Text style={styles.resetText}>{useTranslation('Reset')}</Text>
+                            <T style={styles.resetText}>Reset</T>
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -5,11 +5,11 @@ import {
     View,
     ScrollView,
     TouchableOpacity,
-    SafeAreaView,
     Dimensions,
     Image,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     Menu,
     Bell,
@@ -26,7 +26,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, T } from '../context/LanguageContext';
 
 export default function DrugCenter({ onNavigate, onOpenStore, coinBalance = 0, userName = "User" }) {
     const { useTranslation } = useLanguage();
@@ -43,7 +43,7 @@ export default function DrugCenter({ onNavigate, onOpenStore, coinBalance = 0, u
                             </TouchableOpacity>
                             <View>
                                 <Text style={styles.headerTitle}>VetPathshala Education</Text>
-                                <Text style={styles.headerSubtitle}>{useTranslation('Welcome Back')} {userName}</Text>
+                                <Text style={styles.headerSubtitle}><T>Welcome Back</T> {userName}</Text>
                             </View>
                         </View>
                         <View style={styles.headerRight}>
@@ -67,7 +67,7 @@ export default function DrugCenter({ onNavigate, onOpenStore, coinBalance = 0, u
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={styles.pageTitle}>{useTranslation('Drug Center')}</Text>
+                <T style={styles.pageTitle}>Drug Center</T>
 
                 {/* Balance Card */}
                 <LinearGradient
@@ -77,13 +77,13 @@ export default function DrugCenter({ onNavigate, onOpenStore, coinBalance = 0, u
                     style={styles.balanceCard}
                 >
                     <View style={styles.balanceContent}>
-                        <Text style={styles.balanceLabel}>{useTranslation('Current Balance')}</Text>
-                        <Text style={styles.balanceAmount}>{coinBalance} {useTranslation('Coins')}</Text>
+                        <T style={styles.balanceLabel}>Current Balance</T>
+                        <Text style={styles.balanceAmount}>{coinBalance} <T>Coins</T></Text>
                         <TouchableOpacity
                             style={styles.depositButton}
                             onPress={onOpenStore}
                         >
-                            <Text style={styles.depositText}>{useTranslation('Deposit')}</Text>
+                            <T style={styles.depositText}>Deposit</T>
                         </TouchableOpacity>
                     </View>
                     {/* Coin Icon on right */}
@@ -103,7 +103,7 @@ export default function DrugCenter({ onNavigate, onOpenStore, coinBalance = 0, u
                         style={styles.menuCardImage}
                     />
                     <View style={styles.menuCardContent}>
-                        <Text style={styles.menuCardTitle}>{useTranslation('Drug Calculator')}</Text>
+                        <T style={styles.menuCardTitle}>Drug Calculator</T>
                     </View>
                 </TouchableOpacity>
 
@@ -113,7 +113,7 @@ export default function DrugCenter({ onNavigate, onOpenStore, coinBalance = 0, u
                         style={styles.menuCardImage}
                     />
                     <View style={styles.menuCardContent}>
-                        <Text style={styles.menuCardTitle}>{useTranslation('Drug Index')}</Text>
+                        <T style={styles.menuCardTitle}>Drug Index</T>
                     </View>
                 </TouchableOpacity>
 
@@ -123,23 +123,23 @@ export default function DrugCenter({ onNavigate, onOpenStore, coinBalance = 0, u
             <View style={styles.bottomNav}>
                 <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('dashboard')}>
                     <Home color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>{useTranslation('Home')}</Text>
+                    <T style={styles.navLabel}>Home</T>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('ebook')}>
                     <BookOpen color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>{useTranslation('Ebook')}</Text>
+                    <T style={styles.navLabel}>Ebook</T>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem} onPress={() => { }}>
                     <Pill color="#16a34a" size={24} />
-                    <Text style={[styles.navLabel, { color: '#16a34a' }]}>{useTranslation('Drug Index')}</Text>
+                    <T style={[styles.navLabel, { color: '#16a34a' }]}>Drug Index</T>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem} onPress={onOpenStore}>
                     <Crown color="#f59e0b" size={24} />
-                    <Text style={styles.navLabel}>{useTranslation('Store')}</Text>
+                    <T style={styles.navLabel}>Store</T>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
                     <Settings color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>{useTranslation('Settings')}</Text>
+                    <T style={styles.navLabel}>Settings</T>
                 </TouchableOpacity>
             </View>
         </View>

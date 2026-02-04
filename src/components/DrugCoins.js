@@ -5,17 +5,18 @@ import {
     View,
     ScrollView,
     TouchableOpacity,
-    SafeAreaView,
     Dimensions,
     Image,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     Star,
     ChevronLeft
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { API_BASE } from '../api';
+import { T } from '../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -56,7 +57,7 @@ export default function DrugCoins({ onNavigate, onBack }) {
                 <TouchableOpacity style={styles.backButton} onPress={onBack}>
                     <ChevronLeft color="#1e293b" size={28} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Drug Coins</Text>
+                <T style={styles.headerTitle}>Drug Coins</T>
             </View>
 
             <ScrollView
@@ -71,10 +72,10 @@ export default function DrugCoins({ onNavigate, onBack }) {
                     style={styles.balanceCard}
                 >
                     <View style={styles.balanceContent}>
-                        <Text style={styles.balanceLabel}>Current Balance</Text>
-                        <Text style={styles.balanceAmount}>422000 Coins</Text>
+                        <T style={styles.balanceLabel}>Current Balance</T>
+                        <Text style={styles.balanceAmount}>422000 <T>Coins</T></Text>
                         <TouchableOpacity style={styles.depositButton}>
-                            <Text style={styles.depositText}>Deposit</Text>
+                            <T style={styles.depositText}>Deposit</T>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.coinContainer}>
@@ -92,7 +93,7 @@ export default function DrugCoins({ onNavigate, onBack }) {
                         <View key={pkg.id} style={styles.packageCard}>
                             <View style={styles.packageHeader}>
                                 <View>
-                                    <Text style={styles.coinCount}>{pkg.coins_amount} Coins</Text>
+                                    <Text style={styles.coinCount}>{pkg.coins_amount} <T>Coins</T></Text>
                                     <View style={styles.priceRow}>
                                         <Text style={styles.originalPrice}>Rs.{pkg.original_price}</Text>
                                         <Text style={styles.currentPrice}>Rs.{pkg.price}</Text>
@@ -106,8 +107,11 @@ export default function DrugCoins({ onNavigate, onBack }) {
                                 </View>
                             </View>
 
+                            <TouchableOpacity style={styles.plusButton}>
+                                <T style={styles.plusText}>+</T>
+                            </TouchableOpacity>
                             <TouchableOpacity style={styles.buyButton}>
-                                <Text style={styles.buyText}>Buy</Text>
+                                <T style={styles.buyText}>Buy</T>
                             </TouchableOpacity>
                         </View>
                     ))}

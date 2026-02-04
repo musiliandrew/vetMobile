@@ -54,42 +54,43 @@ const REPORT_REASONS = [
     }
 ];
 
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, T } from '../context/LanguageContext';
 
 export default function ReportModal({ visible, onClose, contentPreview = "According to ācharya charaka,..." }) {
     const [selectedReason, setSelectedReason] = useState(null);
     const [comment, setComment] = useState('');
     const { useTranslation } = useLanguage();
+    const reportPlaceholder = useTranslation("Report This Question");
 
-    const REPORT_REASONS = [
+    const reasons = [
         {
             id: 'inappropriate',
-            label: useTranslation('Inappropriate Content'),
-            desc: useTranslation('Contains offensive, harmful, or inappropriate material'),
+            label: 'Inappropriate Content',
+            desc: 'Contains offensive, harmful, or inappropriate material',
             icon: AlertTriangle
         },
         {
             id: 'incorrect',
-            label: useTranslation('Incorrect Information'),
-            desc: useTranslation('Contains factually incorrect or misleading information'),
+            label: 'Incorrect Information',
+            desc: 'Contains factually incorrect or misleading information',
             icon: Info
         },
         {
             id: 'spam',
-            label: useTranslation('Spam'),
-            desc: useTranslation('Unwanted or repetitive content'),
+            label: 'Spam',
+            desc: 'Unwanted or repetitive content',
             icon: Ban
         },
         {
             id: 'copyright',
-            label: useTranslation('Copyright Violation'),
-            desc: useTranslation('Unauthorized use of copyrighted material'),
+            label: 'Copyright Violation',
+            desc: 'Unauthorized use of copyrighted material',
             icon: Copyright
         },
         {
             id: 'technical',
-            label: useTranslation('Technical Issue'),
-            desc: useTranslation('Content has formatting, display, or functionality problems'),
+            label: 'Technical Issue',
+            desc: 'Content has formatting, display, or functionality problems',
             icon: Bug
         }
     ];
@@ -108,7 +109,7 @@ export default function ReportModal({ visible, onClose, contentPreview = "Accord
                         <View style={styles.headerLeft}>
                             <Flag color="#b91c1c" size={20} fill="#b91c1c" />
                             <View style={styles.headerTexts}>
-                                <Text style={styles.headerTitle}>{useTranslation('Report Content')}</Text>
+                                <T style={styles.headerTitle}>Report Content</T>
                                 <Text style={styles.headerSubtitle} numberOfLines={1}>{contentPreview}</Text>
                             </View>
                         </View>
@@ -118,10 +119,10 @@ export default function ReportModal({ visible, onClose, contentPreview = "Accord
                     </View>
 
                     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                        <Text style={styles.promptText}>{useTranslation('Why are you reporting this question?')}</Text>
+                        <T style={styles.promptText}>Why are you reporting this question?</T>
 
                         <View style={styles.reasonsList}>
-                            {REPORT_REASONS.map((item) => {
+                            {reasons.map((item) => {
                                 const Icon = item.icon;
                                 const isSelected = selectedReason === item.id;
                                 return (
@@ -135,8 +136,8 @@ export default function ReportModal({ visible, onClose, contentPreview = "Accord
                                             <Icon size={20} color={isSelected ? "#b91c1c" : "#94a3b8"} />
                                         </View>
                                         <View style={styles.reasonTextContainer}>
-                                            <Text style={[styles.reasonLabel, isSelected && styles.reasonLabelSelected]}>{item.label}</Text>
-                                            <Text style={styles.reasonDesc}>{item.desc}</Text>
+                                            <T style={[styles.reasonLabel, isSelected && styles.reasonLabelSelected]}>{item.label}</T>
+                                            <T style={styles.reasonDesc}>{item.desc}</T>
                                         </View>
                                     </TouchableOpacity>
                                 );
@@ -145,7 +146,7 @@ export default function ReportModal({ visible, onClose, contentPreview = "Accord
 
                         <TextInput
                             style={styles.textInput}
-                            placeholder={useTranslation("Report This Question")}
+                            placeholder={reportPlaceholder}
                             placeholderTextColor="#94a3b8"
                             multiline
                             numberOfLines={4}
@@ -154,7 +155,7 @@ export default function ReportModal({ visible, onClose, contentPreview = "Accord
                         />
 
                         <TouchableOpacity style={styles.saveButton} onPress={onClose}>
-                            <Text style={styles.saveButtonText}>{useTranslation('Save')}</Text>
+                            <T style={styles.saveButtonText}>Save</T>
                         </TouchableOpacity>
                     </ScrollView>
                 </View>

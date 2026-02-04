@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
     View,
     ScrollView,
     TouchableOpacity,
-    SafeAreaView,
     Dimensions,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     ChevronLeft,
     Languages,
@@ -51,7 +51,6 @@ const PLANS = [
     }
 ];
 
-import { useLanguage } from '../context/LanguageContext';
 
 export default function Subscription({ onBack, token }) {
     const [activeTab, setActiveTab] = useState('select'); // 'select' or 'my_sub'
@@ -85,7 +84,7 @@ export default function Subscription({ onBack, token }) {
                 <TouchableOpacity style={styles.backButton} onPress={onBack}>
                     <ChevronLeft color="#fff" size={24} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{useTranslation('Subscription')}</Text>
+                <T style={styles.headerTitle}>Subscription</T>
                 <TouchableOpacity style={styles.langButton}>
                     <Languages color="#fff" size={20} />
                 </TouchableOpacity>
@@ -97,17 +96,17 @@ export default function Subscription({ onBack, token }) {
                     style={[styles.tab, activeTab === 'select' && styles.activeTab]}
                     onPress={() => setActiveTab('select')}
                 >
-                    <Text style={[styles.tabText, activeTab === 'select' && styles.activeTabText]}>
-                        {useTranslation('Select Plan')}
-                    </Text>
+                    <T style={[styles.tabText, activeTab === 'select' && styles.activeTabText]}>
+                        Select Plan
+                    </T>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.tab, activeTab === 'my_sub' && styles.activeTab]}
                     onPress={() => setActiveTab('my_sub')}
                 >
-                    <Text style={[styles.tabText, activeTab === 'my_sub' && styles.activeTabText]}>
-                        {useTranslation('My Subscription')}
-                    </Text>
+                    <T style={[styles.tabText, activeTab === 'my_sub' && styles.activeTabText]}>
+                        My Subscription
+                    </T>
                 </TouchableOpacity>
             </View>
 
@@ -118,7 +117,7 @@ export default function Subscription({ onBack, token }) {
                 {activeTab === 'select' ? (
                     displayPlans.map((plan) => {
                         // For demo/compatibility, if plan.options doesn't exist, we create one
-                        const options = plan.options || [{ id: 'default', label: `${plan.duration} ${useTranslation('Months')}`, price: plan.price }];
+                        const options = plan.options || [{ id: 'default', label: `${plan.duration} months`, price: plan.price }];
                         const currentOptionId = selectedOptions[plan.id] || options[0].id;
                         const currentOption = options.find(o => o.id === currentOptionId);
                         const finalPrice = Math.round(currentOption.price);
@@ -128,12 +127,12 @@ export default function Subscription({ onBack, token }) {
                                 {/* Card Header */}
                                 <View style={styles.cardHeader}>
                                     <View style={styles.badge}>
-                                        <Text style={styles.badgeText}>{useTranslation('Hurry!! Today\'s Price')} {plan.discount}!</Text>
+                                        <Text style={styles.badgeText}><T>Hurry!! Today's Price</T> {plan.discount}!</Text>
                                     </View>
                                     <View style={styles.priceRow}>
                                         <Text style={styles.strikethrough}>Rs.{plan.originalPrice}</Text>
                                         <Text style={styles.mainPrice}>
-                                            Rs.{finalPrice} / {currentOption.label}
+                                            Rs.{finalPrice} / <T>{currentOption.label}</T>
                                         </Text>
                                     </View>
                                 </View>
@@ -181,7 +180,7 @@ export default function Subscription({ onBack, token }) {
 
                                     {/* Subscribe Button */}
                                     <TouchableOpacity style={styles.subscribeButton}>
-                                        <Text style={styles.subscribeText}>{useTranslation('Subscribe Now')}</Text>
+                                        <T style={styles.subscribeText}>Subscribe Now</T>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -189,7 +188,7 @@ export default function Subscription({ onBack, token }) {
                     })
                 ) : (
                     <View style={styles.emptyState}>
-                        <Text style={styles.emptyText}>{useTranslation('No active subscriptions found.')}</Text>
+                        <T style={styles.emptyText}>No active subscriptions found.</T>
                     </View>
                 )}
             </ScrollView>

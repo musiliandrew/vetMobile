@@ -18,7 +18,7 @@ import { API_BASE } from '../api';
 
 const { width } = Dimensions.get('window');
 
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, T } from '../context/LanguageContext';
 
 export default function SignUp({ onSignUp, onSignIn }) {
     const [formData, setFormData] = useState({
@@ -33,6 +33,11 @@ export default function SignUp({ onSignUp, onSignIn }) {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const { useTranslation, t } = useLanguage();
+    const namePlaceholder = useTranslation("Full Name");
+    const emailPlaceholder = useTranslation("Email");
+    const passwordPlaceholder = useTranslation("Password");
+    const verifyPasswordPlaceholder = useTranslation("Verify Password");
+    const phonePlaceholder = useTranslation("Phone");
 
     const handleSignUp = async () => {
         const { fullName, email, password } = formData;
@@ -53,12 +58,19 @@ export default function SignUp({ onSignUp, onSignIn }) {
                     role: 'STUDENT'
                 })
             });
-            const data = await res.json();
+
+            const contentType = res.headers.get("content-type");
+            let data;
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
+            }
 
             if (res.ok) {
-                Alert.alert(await t('Success'), await t('Account created! Please sign in.'), [
-                    { text: 'OK', onPress: onSignIn }
-                ]);
+                Alert.alert(await t('Success'), await t('Account created! Logging you in...'));
+                onSignUp(data.user, data.token);
             } else {
                 Alert.alert(await t('Signup Failed'), JSON.stringify(data));
             }
@@ -81,11 +93,11 @@ export default function SignUp({ onSignUp, onSignIn }) {
                 style={{ flex: 1 }}
             >
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                    <Text style={styles.headerTitle}>{useTranslation('Sign UP')}</Text>
+                    <T style={styles.headerTitle}>Sign UP</T>
 
-                    <Text style={styles.subtext}>
-                        {useTranslation('Fill in your details to create an account.')}
-                    </Text>
+                    <T style={styles.subtext}>
+                        Fill in your details to create an account.
+                    </T>
 
                     <View style={styles.form}>
                         {/* Name Row */}
@@ -106,7 +118,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
                             <View style={[styles.inputContainer, styles.flexInput]}>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder={useTranslation("Full Name")}
+                                    placeholder={namePlaceholder}
                                     placeholderTextColor="#94a3b8"
                                     value={formData.fullName}
                                     onChangeText={(text) => updateField('fullName', text)}
@@ -118,7 +130,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder={useTranslation("Email")}
+                                placeholder={emailPlaceholder}
                                 placeholderTextColor="#94a3b8"
                                 value={formData.email}
                                 onChangeText={(text) => updateField('email', text)}
@@ -131,7 +143,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder={useTranslation("Password")}
+                                placeholder={passwordPlaceholder}
                                 placeholderTextColor="#94a3b8"
                                 value={formData.password}
                                 onChangeText={(text) => updateField('password', text)}
@@ -152,7 +164,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder={useTranslation("Verify Password")}
+                                placeholder={verifyPasswordPlaceholder}
                                 placeholderTextColor="#94a3b8"
                                 value={formData.confirmPassword}
                                 onChangeText={(text) => updateField('confirmPassword', text)}
@@ -178,7 +190,7 @@ export default function SignUp({ onSignUp, onSignIn }) {
                             <View style={[styles.inputContainer, styles.flexInput]}>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder={useTranslation("Phone")}
+                                    placeholder={phonePlaceholder}
                                     placeholderTextColor="#94a3b8"
                                     value={formData.phone}
                                     onChangeText={(text) => updateField('phone', text)}
@@ -195,14 +207,14 @@ export default function SignUp({ onSignUp, onSignIn }) {
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.signUpButtonText}>{useTranslation('Register')}</Text>
+                                <T style={styles.signUpButtonText}>Register</T>
                             )}
                         </TouchableOpacity>
 
                         <View style={styles.footer}>
-                            <Text style={styles.footerText}>{useTranslation('Already have an account?')} </Text>
+                            <T style={styles.footerText}>Already have an account? </T>
                             <TouchableOpacity onPress={onSignIn}>
-                                <Text style={styles.signInLinkText}>{useTranslation('Sign In')}</Text>
+                                <T style={styles.signInLinkText}>Sign In</T>
                             </TouchableOpacity>
                         </View>
                     </View>

@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
     View,
     ScrollView,
     TouchableOpacity,
-    SafeAreaView,
     Dimensions,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     ChevronLeft,
     Languages,
     Shield
 } from 'lucide-react-native';
 import { API_BASE } from '../api';
+import { useLanguage, T } from '../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -57,13 +58,12 @@ const CHAPTERS = [
     }
 ];
 
-import { useLanguage } from '../context/LanguageContext';
 
 export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopicName = "General Hindi", title }) {
     const { useTranslation, language, setLanguage } = useLanguage();
     const [chapters, setChapters] = useState([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchChapters = async () => {
             if (!subTopicId) return;
             try {
@@ -89,7 +89,7 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
                 <TouchableOpacity style={styles.iconButton} onPress={onBack}>
                     <ChevronLeft color="#fff" size={24} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle} numberOfLines={2}>{useTranslation(displayTitle)}</Text>
+                <T style={styles.headerTitle} numberOfLines={2}>{displayTitle}</T>
                 <TouchableOpacity style={styles.iconButton} onPress={toggleLang}>
                     <Languages color="#fff" size={24} />
                     {language === 'hi' && <View style={styles.langIndicator} />}
@@ -103,7 +103,7 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
                 {/* Breadcrumb */}
                 <View style={styles.breadcrumbContainer}>
                     <Text style={styles.breadcrumb}>
-                        {useTranslation('HP')} / {useTranslation('QBank')} / {useTranslation('Sub Topics')} / <Text style={styles.activeBreadcrumb}>{useTranslation('Chapters')}</Text>
+                        <T>HP</T> / <T>QBank</T> / <T>Sub Topics</T> / <T style={styles.activeBreadcrumb}>Chapters</T>
                     </Text>
                 </View>
 
@@ -111,16 +111,16 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
                 <View style={styles.overviewCard}>
                     <View style={styles.cardHeader}>
                         <View style={styles.textContainer}>
-                            <Text style={styles.overviewTitle}>{useTranslation(displayTitle)}</Text>
-                            <Text style={styles.overviewDesc}>{useTranslation('The key parts of speech that form the foundation of language include nouns, pr...')}</Text>
+                            <T style={styles.overviewTitle}>{displayTitle}</T>
+                            <T style={styles.overviewDesc}>The key parts of speech that form the foundation of language include nouns, pr...</T>
                         </View>
                         <View style={styles.iconCircle}>
                             <Shield color="#fff" size={28} fill="#fff" />
                         </View>
                     </View>
                     <View style={styles.cardFooter}>
-                        <Text style={styles.scoreText}>{useTranslation('Guess Score')} : 0.00%</Text>
-                        <Text style={styles.questionsText}>0/1 {useTranslation('Questions')}</Text>
+                        <Text style={styles.scoreText}><T>Guess Score</T> : 0.00%</Text>
+                        <Text style={styles.questionsText}>0/1 <T>Questions</T></Text>
                     </View>
                 </View>
 
@@ -137,14 +137,14 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
                             >
                                 <View style={styles.cardHeader}>
                                     <View style={styles.textContainer}>
-                                        <Text style={styles.chapterTitle}>
-                                            <Text style={styles.chapterNumber}>{number} </Text>
-                                            {useTranslation(chapter.title)}
+                                        <Text style={styles.topicTitle}>
+                                            <Text style={styles.topicNumber}>{number} </Text>
+                                            <T>{chapter.title}</T>
                                         </Text>
-                                        <Text style={styles.chapterDesc}>{useTranslation(chapter.description)}</Text>
+                                        <Text style={styles.topicDesc}><T>{chapter.description}</T></Text>
                                     </View>
-                                    <View style={styles.iconCircleSmall}>
-                                        <Shield color="#fff" size={20} fill="#fff" />
+                                    <View style={styles.iconCircle}>
+                                        <Shield size={24} color="#16a34a" fill="#16a34a" />
                                     </View>
                                 </View>
 
@@ -153,8 +153,8 @@ export default function TopicChapters({ onBack, onNavigate, subTopicId, subTopic
                                 </View>
 
                                 <View style={styles.cardFooter}>
-                                    <Text style={styles.scoreText}>{useTranslation('Guess Score')} : {chapter.score || '0.00%'}</Text>
-                                    <Text style={styles.questionsText}>{chapter.questions || `0 ${useTranslation('Questions')}`}</Text>
+                                    <Text style={styles.scoreText}><T>Guess Score</T> : {chapter.score || '0.00%'}</Text>
+                                    <Text style={styles.questionsText}>{chapter.questions || <><T>{'0'}</T> <T>Questions</T></>}</Text>
                                 </View>
                             </TouchableOpacity>
                         );

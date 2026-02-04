@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
     View,
-    SafeAreaView,
     TouchableOpacity,
     ScrollView,
     Switch,
     Dimensions,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     ChevronLeft,
     Languages,
     Newspaper
 } from 'lucide-react-native';
 import { API_BASE } from '../api';
+import { useLanguage, T } from '../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -67,14 +68,13 @@ const SUB_TOPICS = [
     }
 ];
 
-import { useLanguage } from '../context/LanguageContext';
 
 export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "General Hindi" }) {
     const [subTopicsEnabled, setSubTopicsEnabled] = useState(true);
     const { useTranslation, language, setLanguage } = useLanguage();
     const [subTopics, setSubTopics] = useState([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchSubTopics = async () => {
             if (!subjectId) return;
             try {
@@ -99,7 +99,7 @@ export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "
                 <TouchableOpacity style={styles.iconButton} onPress={onBack}>
                     <ChevronLeft color="#fff" size={24} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{useTranslation(topicName)}</Text>
+                <T style={styles.headerTitle}>{topicName}</T>
                 <TouchableOpacity style={styles.iconButton} onPress={toggleLang}>
                     <Languages color="#fff" size={24} />
                     {language === 'hi' && <View style={styles.langIndicator} />}
@@ -113,10 +113,10 @@ export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "
                 {/* Breadcrumb & Toggle */}
                 <View style={styles.controlsRow}>
                     <Text style={styles.breadcrumb}>
-                        {useTranslation('HP')} / {useTranslation('QBank')} / <Text style={styles.activeBreadcrumb}>{useTranslation('Topics')}</Text>
+                        <T>HP</T> / <T>QBank</T> / <T style={styles.activeBreadcrumb}>Topics</T>
                     </Text>
                     <View style={styles.toggleContainer}>
-                        <Text style={styles.toggleLabel}>{useTranslation('Sub-Topics')}</Text>
+                        <T style={styles.toggleLabel}>Sub-Topics</T>
                         <Switch
                             trackColor={{ false: "#767577", true: "#86efac" }}
                             thumbColor={subTopicsEnabled ? "#16a34a" : "#f4f3f4"}
@@ -142,9 +142,9 @@ export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "
                                     <View style={styles.textContainer}>
                                         <Text style={styles.topicTitle}>
                                             <Text style={styles.topicNumber}>{number} </Text>
-                                            {useTranslation(topic.title)}
+                                            <T>{topic.title}</T>
                                         </Text>
-                                        <Text style={styles.topicDesc}>{useTranslation(topic.description)}</Text>
+                                        <Text style={styles.topicDesc}><T>{topic.description}</T></Text>
                                     </View>
                                     <View style={styles.iconCircle}>
                                         <Shield color="#fff" size={24} fill="#fff" />
@@ -156,8 +156,8 @@ export default function SubTopics({ onBack, onNavigate, subjectId, topicName = "
                                 </View>
 
                                 <View style={styles.cardFooter}>
-                                    <Text style={styles.scoreText}>{useTranslation('Guess Score')} : {topic.score || '0.00%'}</Text>
-                                    <Text style={styles.questionsText}>{topic.questions || `0 ${useTranslation('Questions')}`}</Text>
+                                    <Text style={styles.scoreText}><T>Guess Score</T> : {topic.score || '0.00%'}</Text>
+                                    <Text style={styles.questionsText}>{topic.questions || <><T>{'0'}</T> <T>Questions</T></>}</Text>
                                 </View>
                             </TouchableOpacity>
                         );

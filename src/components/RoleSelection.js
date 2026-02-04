@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stethoscope, Pill, Sprout, ArrowRight, Check } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
@@ -31,7 +32,7 @@ const ROLES = [
     },
 ];
 
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, T } from '../context/LanguageContext';
 
 export default function RoleSelection({ onContinue }) {
     const [selectedRole, setSelectedRole] = useState('pharmacist');
@@ -42,10 +43,10 @@ export default function RoleSelection({ onContinue }) {
             <View style={styles.content}>
                 <View style={styles.header}>
                     <View style={styles.headerBar} />
-                    <Text style={styles.title}>{useTranslation('Choose Your Role')}</Text>
-                    <Text style={styles.subtitle}>
-                        {useTranslation('Select your profession to get personalized content')}
-                    </Text>
+                    <T style={styles.title}>Choose Your Role</T>
+                    <T style={styles.subtitle}>
+                        Select your profession to get personalized content
+                    </T>
                 </View>
 
                 <View style={styles.optionsContainer}>
@@ -68,12 +69,12 @@ export default function RoleSelection({ onContinue }) {
                                 </View>
 
                                 <View style={styles.roleInfo}>
-                                    <Text style={[styles.roleTitle, isSelected && styles.selectedText]}>
-                                        {useTranslation(role.title)}
-                                    </Text>
-                                    <Text style={styles.roleDescription} numberOfLines={1}>
-                                        {useTranslation(role.description)}
-                                    </Text>
+                                    <T style={[styles.roleTitle, isSelected && styles.selectedText]}>
+                                        {role.title}
+                                    </T>
+                                    <T style={styles.roleDescription} numberOfLines={1}>
+                                        {role.description}
+                                    </T>
                                 </View>
 
                                 <View style={[styles.radioCircle, isSelected && styles.radioSelected]}>
@@ -90,7 +91,7 @@ export default function RoleSelection({ onContinue }) {
                     style={styles.continueButton}
                     onPress={() => onContinue(selectedRole)}
                 >
-                    <Text style={styles.continueText}>{useTranslation('Continue')}</Text>
+                    <T style={styles.continueText}>Continue</T>
                     <ArrowRight color="#fff" size={20} />
                 </TouchableOpacity>
             </View>

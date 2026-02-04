@@ -5,7 +5,6 @@ import {
     View,
     TextInput,
     TouchableOpacity,
-    SafeAreaView,
     Dimensions,
     Image,
     KeyboardAvoidingView,
@@ -13,12 +12,13 @@ import {
     Alert,
     ActivityIndicator
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 import { API_BASE } from '../api';
 
 const { width } = Dimensions.get('window');
 
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, T } from '../context/LanguageContext';
 
 export default function OTPVerification({ email = '', onVerify, onBack }) {
     const [otp, setOtp] = useState(['', '', '', '']);
@@ -27,12 +27,14 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
     const inputRefs = useRef([]);
     const { useTranslation, t } = useLanguage();
 
+    /* 
     useEffect(() => {
-        // Auto-send OTP on mount
+        // Auto-send OTP on mount - Disabled to avoid double sending from EmailOTPLogin
         if (email) {
             sendOtp();
         }
     }, []);
+    */
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -120,7 +122,7 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
         }
     };
 
-    const handleChange = (text, index) => {
+    const handleOtpChange = (text, index) => {
         if (text.length > 1) {
             text = text.charAt(0);
         }
@@ -134,10 +136,15 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
         }
     };
 
-    const handleBackspace = (e, index) => {
+    const handleKeyPress = (e, index) => {
         if (e.nativeEvent.key === 'Backspace' && !otp[index] && index > 0) {
             inputRefs.current[index - 1]?.focus();
         }
+    };
+
+    const handleResend = () => {
+        setTimer(60);
+        sendOtp();
     };
 
     return (
@@ -147,7 +154,7 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
                 style={{ flex: 1 }}
             >
                 <TouchableOpacity style={styles.backButton} onPress={onBack}>
-                    <ChevronLeft color="#166534" size={24} />
+                    <ChevronLeft color="#1e293b" size={24} />
                 </TouchableOpacity>
 
                 <View style={styles.content}>
@@ -157,44 +164,40 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
                         resizeMode="contain"
                     />
 
-                    <Text style={styles.title}>{useTranslation('Verification')}</Text>
-                    <Text style={styles.subtitle}>
-                        {useTranslation("We've sent a 4-digit code to")}
-                    </Text>
+                    <T style={styles.title}>Verification</T>
+                    <T style={styles.subtitle}>
+                        We've sent a 4-digit code to
+                    </T>
                     <Text style={styles.emailText}>{email}</Text>
 
-                    <View style={styles.card}>
-                        <Text style={styles.label}>{useTranslation('Enter OTP')}</Text>
+                    <View style={styles.form}>
+                        <T style={styles.label}>Enter OTP</T>
 
                         <View style={styles.otpContainer}>
                             {otp.map((digit, index) => (
                                 <TextInput
                                     key={index}
                                     ref={(ref) => inputRefs.current[index] = ref}
-                                    style={[styles.otpInput, digit && styles.otpInputFilled]}
+                                    style={styles.otpInput}
                                     value={digit}
-                                    onChangeText={(text) => handleChange(text, index)}
-                                    onKeyPress={(e) => handleBackspace(e, index)}
+                                    onChangeText={(text) => handleOtpChange(text, index)}
+                                    onKeyPress={(e) => handleKeyPress(e, index)}
                                     keyboardType="number-pad"
                                     maxLength={1}
                                     selectTextOnFocus
-                                    editable={!loading}
                                 />
                             ))}
                         </View>
 
                         <View style={styles.resendContainer}>
-                            <Text style={styles.resendText}>{useTranslation("Didn't receive code?")} </Text>
+                            <T style={styles.resendText}>Didn't receive code? </T>
                             <TouchableOpacity
-                                disabled={timer > 0 || loading}
-                                onPress={() => {
-                                    setTimer(60);
-                                    sendOtp();
-                                }}
+                                disabled={timer > 0}
+                                onPress={handleResend}
                             >
-                                <Text style={[styles.resendLink, timer === 0 && styles.resendActive]}>
-                                    {useTranslation('Resend')}{timer > 0 ? ` (${timer}s)` : ''}
-                                </Text>
+                                <T style={[styles.resendLink, timer > 0 && styles.resendDisabled]}>
+                                    Resend{timer > 0 ? ` (${timer}s)` : ''}
+                                </T>
                             </TouchableOpacity>
                         </View>
 
@@ -206,14 +209,14 @@ export default function OTPVerification({ email = '', onVerify, onBack }) {
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.verifyButtonText}>{useTranslation('Verify Now')}</Text>
+                                <T style={styles.verifyButtonText}>Verify Now</T>
                             )}
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 <View style={styles.footerTextContainer}>
-                    <Text style={styles.footerText}>{useTranslation('Learning is fun! 📚✨')}</Text>
+                    <T style={styles.footerText}>Learning is fun! 📚✨</T>
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>

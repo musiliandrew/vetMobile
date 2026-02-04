@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { Text } from 'react-native';
 import { translateText } from '../utils/translator';
 
 const LanguageContext = createContext();
@@ -36,20 +37,24 @@ export const LanguageProvider = ({ children }) => {
     // A hook version that returns the translated text and automatically updates
     // when the language changes or the translation is fetched.
     const useTranslation = (text) => {
-        const [translatedText, setTranslatedText] = useState(text);
+        // Handle array of children (e.g. ["Welcome ", name])
+        const textKey = Array.isArray(text) ? text.join('') : text;
+        const [translatedText, setTranslatedText] = useState(textKey);
 
         useEffect(() => {
             let mounted = true;
 
             const fetchTranslation = async () => {
+                if (!textKey) return;
+
                 // If English, just set original
                 if (language === 'en') {
-                    if (mounted) setTranslatedText(text);
+                    if (mounted) setTranslatedText(textKey);
                     return;
                 }
 
                 // Check cache first
-                const cacheKey = `${text}_${language}`;
+                const cacheKey = `${textKey}_${language}`;
                 if (translations[cacheKey]) {
                     if (mounted) setTranslatedText(translations[cacheKey]);
                     return;
@@ -57,21 +62,21 @@ export const LanguageProvider = ({ children }) => {
 
                 // Fetch from API
                 try {
-                    const result = await translateText(text, language);
+                    const result = await translateText(textKey, language);
                     if (mounted) {
                         setTranslatedText(result);
                         setTranslations(prev => ({ ...prev, [cacheKey]: result }));
                     }
                 } catch (e) {
                     console.warn('Translation error:', e);
-                    if (mounted) setTranslatedText(text);
+                    if (mounted) setTranslatedText(textKey);
                 }
             };
 
             fetchTranslation();
 
             return () => { mounted = false; };
-        }, [text, language]); // Only depend on text and language, not translations
+        }, [textKey, language]); // Only depend on join-computed text and language
 
         return translatedText;
     };
@@ -99,6 +104,5 @@ export const useLanguage = () => {
     return context;
 };
 
-// Also import Text from react-native for the T component
-import { Text } from 'react-native';
+
 

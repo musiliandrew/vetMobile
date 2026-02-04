@@ -5,10 +5,10 @@ import {
     View,
     ScrollView,
     TouchableOpacity,
-    SafeAreaView,
     Dimensions,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft, Languages, Clock, Type, Bookmark, AlertTriangle, Info, ChevronUp, ChevronDown, Menu, ArrowRight, ArrowLeft, ThumbsUp, Eye, Flag, FileEdit, Square, CheckSquare } from 'lucide-react-native';
 import { useLanguage, T } from '../context/LanguageContext';
 import { API_BASE } from '../api';
@@ -17,7 +17,6 @@ import ReportModal from './ReportModal';
 
 const { width } = Dimensions.get('window');
 
-import { useLanguage } from '../context/LanguageContext';
 
 export default function QuizPage({ onBack, questions = [], currentIndex = 0, token }) {
     const [index, setIndex] = useState(currentIndex);
@@ -150,7 +149,7 @@ export default function QuizPage({ onBack, questions = [], currentIndex = 0, tok
                     ) : (
                         <Square color="#94a3b8" size={20} />
                     )}
-                    <Text style={styles.estimatedText}>{useTranslation('Estimated Answer')}</Text>
+                    <T style={styles.estimatedText}>Estimated Answer</T>
                     <Info color="#16a34a" size={16} fill="#dcfce7" />
                 </TouchableOpacity>
 
@@ -161,7 +160,7 @@ export default function QuizPage({ onBack, questions = [], currentIndex = 0, tok
                             style={styles.pyqHeader}
                             onPress={() => setPyqExpanded(!pyqExpanded)}
                         >
-                            <Text style={styles.pyqTitle}>{useTranslation('PYQ Info')}</Text>
+                            <T style={styles.pyqTitle}>PYQ Info</T>
                             {pyqExpanded ? <ChevronUp size={20} color="#0f172a" /> : <ChevronDown size={20} color="#0f172a" />}
                         </TouchableOpacity>
 
@@ -201,7 +200,7 @@ export default function QuizPage({ onBack, questions = [], currentIndex = 0, tok
                         disabled={index === 0}
                     >
                         <ArrowLeft color="#fff" size={20} />
-                        <Text style={styles.prevText}>{useTranslation('Prev')}</Text>
+                        <T style={styles.prevText}>Prev</T>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.menuCircle} onPress={() => setPaletteVisible(true)}>
@@ -218,7 +217,7 @@ export default function QuizPage({ onBack, questions = [], currentIndex = 0, tok
                         }}
                         disabled={index === questions.length - 1}
                     >
-                        <Text style={styles.nextText}>{useTranslation('Next')}</Text>
+                        <T style={styles.nextText}>Next</T>
                         <ArrowRight color="#fff" size={20} />
                     </TouchableOpacity>
                 </View>
@@ -226,19 +225,31 @@ export default function QuizPage({ onBack, questions = [], currentIndex = 0, tok
                 <View style={styles.actionsRow}>
                     <TouchableOpacity style={styles.actionItem}>
                         <ThumbsUp color="#16a34a" size={18} />
-                        <Text style={styles.actionText}>{useTranslation('Like')} 0</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <T style={styles.actionText}>Like</T>
+                            <Text style={styles.actionText}> 0</Text>
+                        </View>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.actionItem}>
                         <Eye color="#16a34a" size={18} />
-                        <Text style={styles.actionText}>{useTranslation('View')} 0</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <T style={styles.actionText}>View</T>
+                            <Text style={styles.actionText}> 0</Text>
+                        </View>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.actionItem} onPress={() => setReportVisible(true)}>
                         <Flag color="#16a34a" size={18} />
-                        <Text style={styles.actionText}>{useTranslation('Report')} 0</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <T style={styles.actionText}>Report</T>
+                            <Text style={styles.actionText}> 0</Text>
+                        </View>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.actionItem}>
                         <FileEdit color="#16a34a" size={18} />
-                        <Text style={styles.actionText}>{useTranslation('Notes')} 0</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <T style={styles.actionText}>Notes</T>
+                            <Text style={styles.actionText}> 0</Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>

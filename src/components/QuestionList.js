@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
     View,
     ScrollView,
     TouchableOpacity,
-    SafeAreaView,
     Dimensions,
     TextInput,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     ChevronLeft,
     Languages,
@@ -24,6 +24,7 @@ import {
     CheckSquare
 } from 'lucide-react-native';
 import { API_BASE } from '../api';
+import { useLanguage, T } from '../context/LanguageContext';
 import ReportModal from './ReportModal';
 import FilterModal from './FilterModal';
 
@@ -82,7 +83,6 @@ const QUESTIONS = [
     }
 ];
 
-import { useLanguage } from '../context/LanguageContext';
 
 export default function QuestionList({ onBack, onNavigate, chapterId, chapterName, token, title }) {
     const { useTranslation, language, setLanguage } = useLanguage();
@@ -92,7 +92,7 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
     const [reportVisible, setReportVisible] = useState(false);
     const [filterVisible, setFilterVisible] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchQuestions = async () => {
             if (!chapterId) return;
             try {
@@ -117,7 +117,7 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
     };
 
     const displayQuestions = questions.length > 0 ? questions : QUESTIONS;
-    const displayTitle = title || chapterName || useTranslation("Questions");
+    const displayTitle = title || chapterName || "Questions";
 
     return (
         <SafeAreaView style={styles.container}>
@@ -126,7 +126,7 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
                 <TouchableOpacity style={styles.iconButton} onPress={onBack}>
                     <ChevronLeft color="#fff" size={24} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{displayTitle}</Text>
+                <T style={styles.headerTitle} numberOfLines={2}>{title || chapterName}</T>
                 <TouchableOpacity style={styles.iconButton} onPress={toggleLang}>
                     <Languages color="#fff" size={24} />
                     {language === 'hi' && <View style={styles.langIndicator} />}
@@ -136,51 +136,39 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
             {/* Breadcrumb - Fixed at top */}
             <View style={styles.breadcrumbContainer}>
                 <Text style={styles.breadcrumb}>
-                    {useTranslation('Himachal Pradesh')} / {useTranslation('Question Bank')} / {displayTitle}
+                    <T>Himachal Pradesh</T> / <T>Question Bank</T> / <T>{displayTitle}</T>
                 </Text>
             </View>
 
-            <View style={styles.searchFilterContainer}>
-                {/* Search Bar */}
-                <View style={styles.searchBar}>
+            {/* Filter Bar */}
+            <View style={styles.filterBar}>
+                <View style={styles.searchContainer}>
+                    <Search color="#94a3b8" size={18} />
                     <TextInput
-                        placeholder={useTranslation("Search")}
                         style={styles.searchInput}
+                        placeholder="Search question here.."
                         placeholderTextColor="#94a3b8"
                     />
-                    <Search color="#94a3b8" size={20} />
                 </View>
+                <TouchableOpacity style={styles.filterBtn} onPress={() => setFilterVisible(true)}>
+                    <Filter color="#fff" size={20} />
+                </TouchableOpacity>
+            </View>
 
-                {/* Filters Row */}
-                <View style={styles.filterRow}>
-                    <TouchableOpacity
-                        style={styles.checkboxContainer}
-                        onPress={() => setBookmarkedFilter(!bookmarkedFilter)}
-                    >
-                        {bookmarkedFilter ? (
-                            <CheckSquare color="#16a34a" size={20} />
-                        ) : (
-                            <Square color="#94a3b8" size={20} />
-                        )}
-                        <Text style={styles.filterLabel}>{useTranslation('Bookmarked')}</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.checkboxContainer}
-                        onPress={() => setPyqFilter(!pyqFilter)}
-                    >
-                        {pyqFilter ? (
-                            <CheckSquare color="#16a34a" size={20} />
-                        ) : (
-                            <Square color="#94a3b8" size={20} />
-                        )}
-                        <Text style={styles.filterLabel}>PYQ's</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.filterButton} onPress={() => setFilterVisible(true)}>
-                        <Filter color="#fff" size={20} />
-                    </TouchableOpacity>
-                </View>
+            {/* Selection Bar */}
+            <View style={styles.selectionBar}>
+                <TouchableOpacity
+                    style={[styles.chip, bookmarkedFilter && styles.activeChip]}
+                    onPress={() => setBookmarkedFilter(!bookmarkedFilter)}
+                >
+                    <T style={[styles.chipText, bookmarkedFilter && styles.activeChipText]}>Bookmarked</T>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.chip, pyqFilter && styles.activeChip]}
+                    onPress={() => setPyqFilter(!pyqFilter)}
+                >
+                    <T style={[styles.chipText, pyqFilter && styles.activeChipText]}>PYQ Question</T>
+                </TouchableOpacity>
             </View>
 
             <ScrollView
@@ -190,11 +178,11 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
                 {/* Results Header */}
                 <View style={styles.resultsHeader}>
                     <Text style={styles.resultsText}>
-                        {displayQuestions.length} {useTranslation('Results Found')}
+                        {displayQuestions.length} <T>Results Found</T>
                     </Text>
                     <View style={styles.scoreBadge}>
                         <Text style={styles.scoreText}>
-                            {useTranslation('Guess Score')}: 100%
+                            <T>Guess Score</T>: 100%
                         </Text>
                     </View>
                 </View>
@@ -231,30 +219,23 @@ export default function QuestionList({ onBack, onNavigate, chapterId, chapterNam
                             <View style={styles.actionsRow}>
                                 <TouchableOpacity style={styles.actionItem}>
                                     <ThumbsUp color={q.interaction?.is_liked ? "#16a34a" : "#94a3b8"} size={16} />
-                                    <Text style={styles.actionText}>
-                                        {useTranslation('Like')} {q.likes || 0}
-                                    </Text>
+                                    <T style={styles.actionText}>Like</T>
+                                    <Text style={styles.actionCount}>0</Text>
                                 </TouchableOpacity>
-
-                                <TouchableOpacity style={styles.actionItem}>
-                                    <Eye color="#16a34a" size={16} />
-                                    <Text style={styles.actionText}>
-                                        {useTranslation('View')} {q.views || 0}
-                                    </Text>
-                                </TouchableOpacity>
-
+                                <View style={styles.actionItem}>
+                                    <Eye color="#64748b" size={16} />
+                                    <T style={styles.actionText}>View</T>
+                                    <Text style={styles.actionCount}>0</Text>
+                                </View>
                                 <TouchableOpacity style={styles.actionItem} onPress={() => setReportVisible(true)}>
-                                    <Flag color={q.interaction?.is_reported ? "#ef4444" : "#16a34a"} size={16} />
-                                    <Text style={styles.actionText}>
-                                        {useTranslation('Report')} {q.reports || 0}
-                                    </Text>
+                                    <Flag color="#64748b" size={16} />
+                                    <T style={styles.actionText}>Report</T>
+                                    <Text style={styles.actionCount}>0</Text>
                                 </TouchableOpacity>
-
                                 <TouchableOpacity style={styles.actionItem}>
-                                    <FileEdit color="#16a34a" size={16} />
-                                    <Text style={styles.actionText}>
-                                        {useTranslation('Notes')} {q.notes || 0}
-                                    </Text>
+                                    <FileEdit color="#64748b" size={16} />
+                                    <T style={styles.actionText}>Notes</T>
+                                    <Text style={styles.actionCount}>0</Text>
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>

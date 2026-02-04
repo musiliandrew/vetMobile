@@ -11,6 +11,7 @@ import RoleSelection from './src/components/RoleSelection';
 import SignIn from './src/components/SignIn';
 import SignUp from './src/components/SignUp';
 import OTPVerification from './src/components/OTPVerification';
+import EmailOTPLogin from './src/components/EmailOTPLogin';
 import Dashboard from './src/components/Dashboard';
 import EbookPage from './src/components/EbookPage';
 import DrugCenter from './src/components/DrugCenter';
@@ -59,7 +60,7 @@ function AppContent() {
   const [navParams, setNavParams] = useState({});
 
   // Use the language context
-  const { setLanguage } = useLanguage();
+  const { setLanguage, t } = useLanguage();
 
   const navigate = (screen, params = {}) => {
     setNavParams(params);
@@ -122,7 +123,19 @@ function AppContent() {
           setCurrentStep('dashboard');
         }}
         onSignUp={() => setCurrentStep('signup')}
-        onForgotPassword={() => setCurrentStep('otp')}
+        onForgotPassword={() => setCurrentStep('email_otp')}
+      />
+    );
+  }
+
+  if (currentStep === 'email_otp') {
+    return (
+      <EmailOTPLogin
+        onVerified={(data) => {
+          setNavParams({ email: data.email });
+          setCurrentStep('otp');
+        }}
+        onBack={() => setCurrentStep('signin')}
       />
     );
   }
@@ -130,14 +143,10 @@ function AppContent() {
   if (currentStep === 'signup') {
     return (
       <SignUp
-        onSignUp={(formData) => {
-          if (formData.fullName && formData.email && formData.password) {
-            Alert.alert('Success', 'Account created successfully!');
-            setUser({ email: formData.email, name: formData.fullName });
-            setCurrentStep('dashboard');
-          } else {
-            Alert.alert('Error', 'Please fill in all required fields');
-          }
+        onSignUp={(userData, token) => {
+          setUser(userData);
+          setNavParams({ token });
+          setCurrentStep('dashboard');
         }}
         onSignIn={() => setCurrentStep('signin')}
       />
@@ -155,7 +164,7 @@ function AppContent() {
             setCurrentStep('dashboard');
           }
         }}
-        onBack={() => setCurrentStep('signin')}
+        onBack={() => setCurrentStep('email_otp')}
       />
     );
   }

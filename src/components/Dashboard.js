@@ -5,11 +5,11 @@ import {
     View,
     ScrollView,
     TouchableOpacity,
-    SafeAreaView,
     Dimensions,
     Image,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     Menu,
     Bell,
@@ -33,6 +33,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import SideMenu from './SideMenu';
 import { API_BASE } from '../api';
+import { useLanguage, T } from '../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -75,8 +76,6 @@ const SOCIALS = [
     { id: 7, icon: MessageCircle, color: '#25d366', label: 'WhatsApp' },
     { id: 8, icon: Mail, color: '#ea4335', label: 'Email' },
 ];
-
-import { useLanguage } from '../context/LanguageContext';
 
 export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, onOpenStore }) {
     const [menuVisible, setMenuVisible] = React.useState(false);
@@ -122,8 +121,8 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                                 <Menu color="#fff" size={24} />
                             </TouchableOpacity>
                             <View>
-                                <Text style={styles.headerTitle}>VetPathshala Education</Text>
-                                <Text style={styles.headerSubtitle}>{useTranslation('Welcome Back')} {userName}</Text>
+                                <T style={styles.headerTitle}>VetPathshala Education</T>
+                                <T style={styles.headerSubtitle}>Welcome Back {userName}</T>
                             </View>
                         </View>
                         <View style={styles.headerRight}>
@@ -155,8 +154,8 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                         style={styles.banner}
                     >
                         <View style={styles.bannerContent}>
-                            <Text style={styles.bannerTitle}>{banners[0].title}</Text>
-                            <Text style={styles.bannerText}>{banners[0].description}</Text>
+                            <T style={styles.bannerTitle}>{banners[0].title}</T>
+                            <T style={styles.bannerText}>{banners[0].description}</T>
                         </View>
                         <View style={styles.bannerIllustration}>
                             <View style={[styles.coin, { top: 0, right: 0 }]} />
@@ -172,11 +171,11 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                         style={styles.banner}
                     >
                         <View style={styles.bannerContent}>
-                            <Text style={styles.bannerTitle}>{useTranslation('Invite Friends & Earn Big!')}</Text>
-                            <Text style={styles.bannerText}>
-                                {useTranslation('You get 100 Coins + 10% Cash Commission.')}
-                            </Text>
-                            <Text style={styles.bannerText}>{useTranslation('Your friend gets 50 Coins.')}</Text>
+                            <T style={styles.bannerTitle}>Invite Friends & Earn Big!</T>
+                            <T style={styles.bannerText}>
+                                You get 100 Coins + 10% Cash Commission.
+                            </T>
+                            <T style={styles.bannerText}>Your friend gets 50 Coins.</T>
                         </View>
                         <View style={styles.bannerIllustration}>
                             <View style={[styles.coin, { top: 0, right: 0 }]} />
@@ -187,7 +186,7 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                 )}
 
                 {/* Categories */}
-                <Text style={styles.sectionTitle}>{useTranslation('Choose Category')}</Text>
+                <T style={styles.sectionTitle}>Choose Category</T>
                 <View style={styles.grid}>
                     {subjects.length > 0 ? subjects.map((sub) => (
                         <TouchableOpacity
@@ -203,7 +202,7 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                             >
                                 <View style={[styles.categoryImagePlaceholder, { backgroundColor: 'rgba(0,0,0,0.05)' }]} />
                             </LinearGradient>
-                            <Text style={styles.categoryTitle}>{sub.title_en}</Text>
+                            <T style={styles.categoryTitle}>{sub.title_en}</T>
                             <View style={styles.categoryBorder} />
                         </TouchableOpacity>
                     )) : CATEGORIES.map((cat) => (
@@ -227,31 +226,34 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                                 {/* Placeholder for category image */}
                                 <View style={[styles.categoryImagePlaceholder, { backgroundColor: 'rgba(0,0,0,0.05)' }]} />
                             </LinearGradient>
-                            <Text style={styles.categoryTitle}>{useTranslation(cat.title)}</Text>
+                            <T style={styles.categoryTitle}>{cat.title}</T>
                             <View style={styles.categoryBorder} />
                         </TouchableOpacity>
                     ))}
                 </View>
 
                 {/* Recent Activity */}
-                <Text style={[styles.sectionTitle, { marginTop: 20 }]}>{useTranslation('Recent Activity')}</Text>
+                <T style={[styles.sectionTitle, { marginTop: 20 }]}>Recent Activity</T>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.activityScroll}>
                     {RECENT_ACTIVITY.map((activity) => (
                         <View key={activity.id} style={[styles.activityCard, { backgroundColor: activity.color }]}>
-                            <Text style={styles.activityTitle}>{useTranslation(activity.title)}</Text>
+                            <T style={styles.activityTitle}>{activity.title}</T>
                             <View style={styles.progressBarBg}>
                                 <View style={[styles.progressBarFill, { width: `${activity.percent * 100}%`, backgroundColor: activity.barColor }]} />
                             </View>
-                            <Text style={[styles.activityProgress, { color: activity.barColor }]}>{activity.progress}</Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={[styles.activityProgress, { color: activity.barColor }]}>{activity.progress.split(' ')[0]} </Text>
+                                <T style={[styles.activityProgress, { color: activity.barColor }]}>{activity.progress.split(' ')[1]}</T>
+                            </View>
                         </View>
                     ))}
                 </ScrollView>
 
                 {/* Success Stories */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>{useTranslation('Success Stories')}</Text>
+                    <T style={styles.sectionTitle}>Success Stories</T>
                     <TouchableOpacity style={styles.seeAllBtn}>
-                        <Text style={styles.seeAllText}>{useTranslation('See All')}</Text>
+                        <T style={styles.seeAllText}>See All</T>
                         <ChevronRight size={16} color="#3b82f6" />
                     </TouchableOpacity>
                 </View>
@@ -259,9 +261,9 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                 <View style={styles.testimonialCard}>
                     {testimonials.length > 0 ? (
                         <>
-                            <Text style={styles.testimonialText}>
+                            <T style={styles.testimonialText}>
                                 "{testimonials[0].content}"
-                            </Text>
+                            </T>
                             <View style={styles.testimonialUser}>
                                 <View style={styles.avatar}>
                                     <Text style={styles.avatarText}>
@@ -270,15 +272,15 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                                 </View>
                                 <View>
                                     <Text style={styles.userName}>{testimonials[0].user_name}</Text>
-                                    <Text style={styles.userRole}>{testimonials[0].user_role}</Text>
+                                    <T style={styles.userRole}>{testimonials[0].user_role}</T>
                                 </View>
                             </View>
                         </>
                     ) : (
                         <>
-                            <Text style={styles.testimonialText}>
-                                "{useTranslation('VetPathshala helped me pass my exams with flying colors. The Q Bank and lectures were incredibly helpful for my preparation.')}"
-                            </Text>
+                            <T style={styles.testimonialText}>
+                                "VetPathshala helped me pass my exams with flying colors. The Q Bank and lectures were incredibly helpful for my preparation."
+                            </T>
                             <View style={styles.testimonialUser}>
                                 <View style={styles.avatar}>
                                     <Text style={styles.avatarText}>DR</Text>
@@ -294,7 +296,7 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
 
                 {/* Connect With Us */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>{useTranslation('Connect With Us')}</Text>
+                    <T style={styles.sectionTitle}>Connect With Us</T>
                 </View>
                 <View style={styles.socialGrid}>
                     {SOCIALS.map((social) => {
@@ -304,7 +306,7 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
                                 <View style={[styles.socialCircle, { backgroundColor: social.color }]}>
                                     <Icon color="#fff" size={20} />
                                 </View>
-                                <Text style={styles.socialLabel}>{social.label}</Text>
+                                <T style={styles.socialLabel}>{social.label}</T>
                             </TouchableOpacity>
                         );
                     })}
@@ -315,23 +317,23 @@ export default function Dashboard({ userRole, userName = "Nikhil", onNavigate, o
             <View style={styles.bottomNav}>
                 <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('dashboard')}>
                     <Home color="#16a34a" size={24} />
-                    <Text style={[styles.navLabel, { color: '#16a34a' }]}>{useTranslation('Home')}</Text>
+                    <T style={[styles.navLabel, { color: '#16a34a' }]}>Home</T>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('ebook')}>
                     <BookOpen color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>{useTranslation('Ebook')}</Text>
+                    <T style={styles.navLabel}>Ebook</T>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('drug_center')}>
                     <Pill color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>{useTranslation('Drug Index')}</Text>
+                    <T style={styles.navLabel}>Drug Index</T>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem} onPress={onOpenStore}>
                     <Crown color="#f59e0b" size={24} />
-                    <Text style={styles.navLabel}>{useTranslation('Store')}</Text>
+                    <T style={styles.navLabel}>Store</T>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
                     <Settings color="#64748b" size={24} />
-                    <Text style={styles.navLabel}>{useTranslation('Settings')}</Text>
+                    <T style={styles.navLabel}>Settings</T>
                 </TouchableOpacity>
             </View>
         </View>
@@ -450,7 +452,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     categoryCard: {
-        width: (width - 52) / 2, // 2 column layout taking into account padding
+        width: (Dimensions.get('window').width - 52) / 2, // 2 column layout taking into account padding
         backgroundColor: '#fff',
         borderRadius: 12,
         marginBottom: 8,

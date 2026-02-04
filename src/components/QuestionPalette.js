@@ -13,6 +13,7 @@ import {
     Lock,
     ArrowDown
 } from 'lucide-react-native';
+import { T } from '../context/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 const DRAWER_WIDTH = width * 0.85;
@@ -40,10 +41,10 @@ export default function QuestionPalette({ visible, onClose, currentQuestion = 1,
                                     <View style={[styles.statBox, { backgroundColor: '#4d7c0f' }]}>
                                         <Text style={styles.statNumber}>1</Text>
                                     </View>
-                                    <Text style={styles.statLabel}>सुलझा</Text>
+                                    <T style={styles.statLabel}>Solved</T>
                                 </View>
                                 <View style={[styles.statItem, { justifyContent: 'flex-end' }]}>
-                                    <Text style={styles.statLabel}>अनहल</Text>
+                                    <T style={styles.statLabel}>Unsolved</T>
                                     <View style={[styles.statBox, { backgroundColor: '#b91c1c' }]}>
                                         <Text style={styles.statNumber}>99</Text>
                                     </View>
@@ -55,10 +56,10 @@ export default function QuestionPalette({ visible, onClose, currentQuestion = 1,
                                     <View style={[styles.statBox, { backgroundColor: '#bbf7d0' }]}>
                                         <Text style={[styles.statNumber, { color: '#15803d' }]}>0</Text>
                                     </View>
-                                    <Text style={styles.statLabel}>सही</Text>
+                                    <T style={styles.statLabel}>Correct</T>
                                 </View>
                                 <View style={[styles.statItem, { justifyContent: 'flex-end' }]}>
-                                    <Text style={styles.statLabel}>गलत</Text>
+                                    <T style={styles.statLabel}>Wrong</T>
                                     <View style={[styles.statBox, { backgroundColor: '#fecaca' }]}>
                                         <Text style={[styles.statNumber, { color: '#b91c1c' }]}>1</Text>
                                     </View>
@@ -100,7 +101,7 @@ export default function QuestionPalette({ visible, onClose, currentQuestion = 1,
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.questionButton}>
-                            <Text style={styles.questionButtonText}>प्रश्न</Text>
+                            <T style={styles.questionButtonText}>Question</T>
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -7,9 +7,9 @@ import {
     TouchableOpacity,
     Dimensions,
     Image,
-    Modal,
-    SafeAreaView
+    Modal
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     Home,
     BookOpen,
@@ -108,7 +108,7 @@ const MENU_SECTIONS = [
     }
 ];
 
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, T } from '../context/LanguageContext';
 
 export default function SideMenu({ visible, onClose, userName = "Rohan Rai", email = "vetstudywithnk@gmail.com", onNavigate }) {
     const { useTranslation } = useLanguage();
@@ -138,10 +138,10 @@ export default function SideMenu({ visible, onClose, userName = "Rohan Rai", ema
                         </View>
 
                         <View style={styles.profileInfo}>
-                            <Text style={styles.profileName} numberOfLines={1}>{userName}..............</Text>
+                            <Text style={styles.profileName} numberOfLines={1}>{userName}</Text>
                             <Text style={styles.profileEmail} numberOfLines={1}>{email}</Text>
                             <TouchableOpacity>
-                                <Text style={styles.viewProfile}>{useTranslation('View Profile')}</Text>
+                                <T style={styles.viewProfile}>View Profile</T>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -153,7 +153,7 @@ export default function SideMenu({ visible, onClose, userName = "Rohan Rai", ema
                     >
                         {MENU_SECTIONS.map((section, index) => (
                             <View key={index} style={styles.section}>
-                                <Text style={styles.sectionTitle}>{useTranslation(section.title)}</Text>
+                                <T style={styles.sectionTitle}>{section.title}</T>
                                 {section.items.map((item) => {
                                     const Icon = item.icon;
                                     return (
@@ -175,13 +175,13 @@ export default function SideMenu({ visible, onClose, userName = "Rohan Rai", ema
                                                         <Icon size={20} color={item.color || '#334155'} />
                                                     </View>
                                                 )}
-                                                <Text style={[
+                                                <T style={[
                                                     styles.menuItemLabel,
                                                     item.id === 'dashboard' && styles.activeLabel,
                                                     !Icon && styles.indentedLabel
                                                 ]}>
-                                                    {useTranslation(item.label)}
-                                                </Text>
+                                                    {item.label}
+                                                </T>
                                             </View>
                                             <ChevronRight size={16} color="#94a3b8" />
                                         </TouchableOpacity>

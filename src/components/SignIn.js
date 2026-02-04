@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Eye, EyeOff, Facebook, Smartphone, ArrowRight } from 'lucide-react-native';
 import { Alert, ActivityIndicator } from 'react-native';
 import { API_BASE } from '../api';
+import { useLanguage, T } from '../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -28,6 +29,11 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    // Google Sign-In Configuration
+    const { useTranslation, t } = useLanguage();
+    const emailPlaceholder = useTranslation("Email / Phone");
+    const passwordPlaceholder = useTranslation("Password");
 
     // Google Sign-In Configuration
     const [request, response, promptAsync] = Google.useAuthRequest({
@@ -73,7 +79,7 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
 
         } catch (error) {
             console.error("Google Sign-In Error:", error);
-            Alert.alert('Error', 'Failed to sign in with Google');
+            Alert.alert(await t('Error'), await t('Failed to sign in with Google'));
         } finally {
             setLoading(false);
         }
@@ -81,7 +87,7 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
 
     const handleSignIn = async () => {
         if (!email || !password) {
-            Alert.alert('Error', 'Please enter both email and password');
+            Alert.alert(await t('Error'), await t('Please enter both email and password'));
             return;
         }
 
@@ -92,16 +98,24 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: email, password: password })
             });
-            const data = await res.json();
+
+            const contentType = res.headers.get("content-type");
+            let data;
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
+            }
 
             if (res.ok) {
                 onSignIn(data.user, data.token);
             } else {
-                Alert.alert('Login Failed', data.error || 'Invalid credentials');
+                Alert.alert(await t('Login Failed'), data.error || await t('Invalid credentials'));
             }
         } catch (error) {
             console.error("Login error:", error);
-            Alert.alert('Error', 'Failed to connect to server');
+            Alert.alert(await t('Error'), await t('Network error. Please try again.'));
         } finally {
             setLoading(false);
         }
@@ -114,11 +128,11 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
                 style={{ flex: 1 }}
             >
                 <View style={styles.content}>
-                    <Text style={styles.headerTitle}>Sign In</Text>
+                    <T style={styles.headerTitle}>Sign In</T>
 
-                    <Text style={styles.subtext}>
+                    <T style={styles.subtext}>
                         By signing in to VetPathshala, users agree to abide by our sign-in policy.
-                    </Text>
+                    </T>
 
                     <View style={styles.illustrationContainer}>
                         <View style={styles.illustrationCircle}>
@@ -130,7 +144,7 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder="Email / Phone"
+                                placeholder={emailPlaceholder}
                                 placeholderTextColor="#94a3b8"
                                 value={email}
                                 onChangeText={setEmail}
@@ -142,7 +156,7 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder="Password"
+                                placeholder={passwordPlaceholder}
                                 placeholderTextColor="#94a3b8"
                                 value={password}
                                 onChangeText={setPassword}
@@ -161,7 +175,7 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
                         </View>
 
                         <TouchableOpacity style={styles.forgotPassword} onPress={onForgotPassword}>
-                            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                            <T style={styles.forgotPasswordText}>Forgot Password?</T>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -172,13 +186,13 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.signInButtonText}>Sign In</Text>
+                                <T style={styles.signInButtonText}>Sign In</T>
                             )}
                         </TouchableOpacity>
 
                         <View style={styles.dividerContainer}>
                             <View style={styles.line} />
-                            <Text style={styles.dividerText}>or continue with</Text>
+                            <T style={styles.dividerText}>or continue with</T>
                             <View style={styles.line} />
                         </View>
 
@@ -201,9 +215,9 @@ export default function SignIn({ onSignIn, onSignUp, onForgotPassword }) {
                         </View>
 
                         <View style={styles.footer}>
-                            <Text style={styles.footerText}>Don't have an account? </Text>
+                            <T style={styles.footerText}>Don't have an account? </T>
                             <TouchableOpacity onPress={onSignUp}>
-                                <Text style={styles.signUpLinkText}>Create Account</Text>
+                                <T style={styles.signUpLinkText}>Create Account</T>
                             </TouchableOpacity>
                         </View>
                     </View>

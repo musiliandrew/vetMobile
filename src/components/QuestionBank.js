@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
     View,
     ScrollView,
     TouchableOpacity,
-    SafeAreaView,
     Dimensions,
     Switch,
     Image,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     ChevronLeft,
     Languages,
@@ -69,14 +69,13 @@ const TOPICS = [
     }
 ];
 
-import { useLanguage } from '../context/LanguageContext';
 
 export default function QuestionBank({ onBack, onNavigate }) {
     const [topicsEnabled, setTopicsEnabled] = useState(true);
     const { useTranslation, language, setLanguage } = useLanguage();
     const [topics, setTopics] = useState([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchSubjects = async () => {
             try {
                 const res = await fetch(`${API_BASE}/qbank/subjects/`);
@@ -136,10 +135,10 @@ export default function QuestionBank({ onBack, onNavigate }) {
                     {/* Breadcrumb & Toggle */}
                     <View style={styles.controlsRow}>
                         <Text style={styles.breadcrumb}>
-                            {useTranslation('Himachal Pradesh')} / <Text style={styles.activeBreadcrumb}>{useTranslation('Question Bank')}</Text>
+                            <T>Himachal Pradesh</T> / <T style={styles.activeBreadcrumb}>Question Bank</T>
                         </Text>
                         <View style={styles.toggleContainer}>
-                            <Text style={styles.toggleLabel}>{useTranslation('Topics')}</Text>
+                            <T style={styles.toggleLabel}>Topics</T>
                             <Switch
                                 trackColor={{ false: "#767577", true: "#86efac" }}
                                 thumbColor={topicsEnabled ? "#16a34a" : "#f4f3f4"}
